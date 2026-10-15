@@ -12,5 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SDL2 CONFIG REQUIRED)
 
-add_executable(RPGgame src/RPGgame.cpp)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)  
+add_executable(RPGgame ${SOURCES})  # building game from all collected cpp files in source 
+target_include_directories(RPGgame PRIVATE src)   # src as starting point for includes
+
 target_link_libraries(RPGgame PRIVATE SDL2::SDL2 SDL2::SDL2main)
