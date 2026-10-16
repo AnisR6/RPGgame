@@ -1,31 +1,32 @@
-#include <SDL.h>
+#include <SFML/Graphics.hpp>
 #include <iostream>
 
 int main(int, char**) {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        std::cerr << "SDL_Init failed: " << SDL_GetError() << '\n';
-        return 1;
-    }
 
-    SDL_Window* window = SDL_CreateWindow(
-        "RPGgame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
-    SDL_Renderer* renderer = SDL_CreateRenderer(
-        window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "RPGgame");
+    window.setFramerateLimit(60);
 
-    bool running = true;
-    while (running) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) running = false;
+    sf::CircleShape circle(40.f);
+    circle.setFillColor(sf::Color::Green);
+    circle.setPosition({100.f, 100.f});
+
+    sf::RectangleShape rect ({120.f, 60.f});
+    rect.setFillColor(sf::Color(200, 50, 50));
+    rect.setPosition({400.f, 300.f});
+
+    while (window.isOpen()) {
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                window.close();
+            }
         }
 
-        SDL_SetRenderDrawColor(renderer, 30, 120, 60, 255);  // green
-        SDL_RenderClear(renderer);
-        SDL_RenderPresent(renderer);
+        window.clear(sf::Color(30, 30, 40));
+        window.draw(circle);
+        window.draw(rect);
+        window.display();
     }
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+
     return 0;
 }
