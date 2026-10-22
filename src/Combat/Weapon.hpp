@@ -1,0 +1,16 @@
+#pragma once
+#include <vector>
+
+enum WeaponType {
+    SWORD,
+    LANCE,
+    AXE,
+    STAFF
+};
+
+
+struct Weapon {
+    WeaponType type;
+    unsigned baseDamage;
+    float critRate;
+};
