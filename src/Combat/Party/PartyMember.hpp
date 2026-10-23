@@ -2,10 +2,10 @@
 #include <vector>
 
 #include "Ability/Combatable.hpp"
-#include "Combat/Stats.hpp"
-#include "Combat/CombatSkill.hpp"
-#include "Combat/Spell.hpp"
-#include "Combat/CombatAction.hpp"
+#include "Combat/Structure/Stats.hpp"
+#include "Combat/Structure/CombatSkill.hpp"
+#include "Combat/Structure/Spell.hpp"
+#include "Combat/Structure/CombatAction.hpp"
 
 
 class PartyMember : public Combatable {
@@ -15,6 +15,9 @@ class PartyMember : public Combatable {
     std::vector<Spell> spells;
 
   public:
-    Stats& getStats() const override;
+    const Stats& getStats() const override;
+	const std::vector<Spell>& getSpells() const override;
+	const std::vector<CombatSkill>& getCombatSkills() const override;
     CombatAction chooseAction() override;
+
 };

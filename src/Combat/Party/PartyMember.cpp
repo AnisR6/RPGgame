@@ -1,8 +1,16 @@
 #include "Combat/Party/PartyMember.hpp"
 
-Stats& PartyMember::getStats() const {
-
+const Stats& PartyMember::getStats() const {
+	return stats;
 };
+
+const std::vector<Spell>& PartyMember::getSpells() const {
+	return spells;
+}
+
+const std::vector<CombatSkill> & PartyMember::getCombatSkills() const{
+	return combatSkills;
+}
 
 CombatAction PartyMember::chooseAction() {
 
