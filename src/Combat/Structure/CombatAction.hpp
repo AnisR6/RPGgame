@@ -6,6 +6,14 @@
 enum ActionType { BASE_ATTACK, SPELL, SKILL, INVENTORY, FLIGHT };
 
 struct CombatAction {
+  private:
+	void handleBaseAttack();
+	void handleSpell();
+	void handleSkill();
+	void handleInventory();
+	void handleFlight();
+
+  public:
 	Combatable *actor = nullptr;
 	std::vector<Combatable *> targets;
 	ActionType actionType = BASE_ATTACK;
@@ -16,5 +24,6 @@ struct CombatAction {
 	}
 	CombatAction() = default;
 
+	void evalCombatAction();
 	bool operator<(const CombatAction &other) const noexcept;
 };
