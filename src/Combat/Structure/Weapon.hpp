@@ -1,15 +1,9 @@
 #pragma once
 
-enum WeaponType {
-    SWORD,
-    LANCE,
-    AXE,
-    STAFF
-};
-
+enum WeaponType { SWORD, LANCE, AXE, STAFF };
 
 struct Weapon {
-    WeaponType type;
-    unsigned baseDamage;
-    float critRate;
+	WeaponType type;
+	unsigned baseDamage;
+	float critRate;
 };

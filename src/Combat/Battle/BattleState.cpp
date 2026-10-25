@@ -1,7 +1,8 @@
 #include "BattleState.hpp"
 
-bool BattleState::lost() const{
-	for (auto& member : partyMembers) {
+bool BattleState::lost() const
+{
+	for (auto &member : partyMembers) {
 		if (member.isAlive()) {
 			return false;
 		}
@@ -9,8 +10,9 @@ bool BattleState::lost() const{
 	return true;
 }
 
-bool BattleState::won() const{
-	for (auto& enemy : enemies) {
+bool BattleState::won() const
+{
+	for (auto &enemy : enemies) {
 		if (enemy.isAlive()) {
 			return false;
 		}
@@ -18,21 +20,21 @@ bool BattleState::won() const{
 	return true;
 }
 
-const std::vector<PartyMember>& BattleState::getPartyMembers() const
+const std::vector<PartyMember> &BattleState::getPartyMembers() const
 {
 	return partyMembers;
 }
 
-std::vector<PartyMember>& BattleState::getPartyMembers()
+std::vector<PartyMember> &BattleState::getPartyMembers()
 {
 	return partyMembers;
 }
-const std::vector<Enemy>& BattleState::getEnemies() const
+const std::vector<Enemy> &BattleState::getEnemies() const
 {
 	return enemies;
 }
 
-std::vector<Enemy>& BattleState::getEnemies()
+std::vector<Enemy> &BattleState::getEnemies()
 {
 	return enemies;
 }
