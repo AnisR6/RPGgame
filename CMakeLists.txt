@@ -20,3 +20,6 @@ target_include_directories(RPGgame PRIVATE src)   # src as starting point for in
 
 target_link_libraries(RPGgame PRIVATE SFML::Network SFML::Graphics SFML::Window SFML::Audio SFML::System)
 target_link_libraries(RPGgame PRIVATE ImGui-SFML::ImGui-SFML)
+
+enable_testing()
+add_subdirectory(tests)

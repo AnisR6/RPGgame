@@ -11,11 +11,6 @@
           "CMAKE_C_COMPILER": "cl.exe",
           "CMAKE_CXX_COMPILER": "cl.exe",
           "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
-        "condition": {
-          "type": "equals",
-          "lhs": "${hostSystemName}",
-          "rhs": "Windows"
         }
       },
         {
@@ -40,70 +35,83 @@
                 "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "$env{VSINSTALLDIR}Common7/IDE/CommonExtensions/Microsoft/CMake/cmake/Microsoft/SegmentHeap.cmake"
             }
         },
-        {
-            "name": "x86-debug",
-            "displayName": "x86 Debug",
-            "inherits": "windows-base",
-            "architecture": {
-                "value": "x86",
-                "strategy": "external"
-            },
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "$env{VSINSTALLDIR}Common7/IDE/CommonExtensions/Microsoft/CMake/cmake/Microsoft/SegmentHeap.cmake"
-            }
-        },
-        {
-            "name": "x86-release",
-            "displayName": "x86 Release",
-            "inherits": "x86-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "$env{VSINSTALLDIR}Common7/IDE/CommonExtensions/Microsoft/CMake/cmake/Microsoft/SegmentHeap.cmake"
-            }
-        },
       {
-        "name": "linux-base",
+        "name": "linux-gcc-base",
         "hidden": true,
         "generator": "Ninja",
         "binaryDir": "${sourceDir}/out/build/${presetName}",
         "installDir": "${sourceDir}/out/install/${presetName}",
         "cacheVariables": {
-            "CMAKE_C_COMPILER": "clang",
-            "CMAKE_CXX_COMPILER": "clang++",
+            "CMAKE_C_COMPILER": "gcc",
+            "CMAKE_CXX_COMPILER": "g++",
             "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        },
-        "condition": {
-            "type": "equals",
-            "lhs": "${hostSystemName}",
-            "rhs": "Linux"
         }
       },
+        {
+            "name": "linux-gcc-debug",
+            "displayName": "Linux Debug",
+            "inherits": "linux-gcc-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-gcc-release",
+            "displayName": "Linux Release",
+            "inherits": "linux-gcc-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
       {
-          "name": "linux-debug",
-          "displayName": "Linux Debug",
-          "inherits": "linux-base",
-          "cacheVariables": {
-              "CMAKE_BUILD_TYPE": "Debug"
-          }
+        "name": "macos-base",
+        "hidden": true,
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/out/build/${presetName}",
+        "installDir": "${sourceDir}/out/install/${presetName}",
+        "cacheVariables": {
+          "CMAKE_C_COMPILER": "clang",
+          "CMAKE_CXX_COMPILER": "clang++",
+          "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        }
       },
-      {
-          "name": "linux-release",
-          "displayName": "Linux Release",
-          "inherits": "linux-base",
+        {
+          "name": "macos-debug",
+          "displayName": "macOS AppleClang Debug",
+          "inherits": "macos-base",
           "cacheVariables": {
-              "CMAKE_BUILD_TYPE": "Release"
+            "CMAKE_BUILD_TYPE": "Debug"
           }
-      }
+        },
+        {
+          "name": "macos-release",
+          "displayName": "macOS AppleClang Release",
+          "inherits": "macos-base",
+          "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Release"
+          }
+        }
     ],
     "buildPresets": [
         {
-            "name": "linux-debug",
-            "configurePreset": "linux-debug"
+            "name": "x64-debug",
+            "configurePreset": "x64-debug"
         },
         {
-            "name": "linux-release",
-            "configurePreset": "linux-release"
+          "name": "x64-release",
+          "configurePreset": "x64-release"
+        },
+        {
+            "name": "linux-gcc-debug",
+            "configurePreset": "linux-gcc-debug"
+        },
+        {
+            "name": "linux-gcc-release",
+            "configurePreset": "linux-gcc-release"
+        },
+        {
+            "name": "macos-release",
+            "configurePreset": "macos-release"
         }
     ]
 }

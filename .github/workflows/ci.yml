@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows MSVC
+            os: windows-latest
+            preset: x64-release
+            build_dir: out/build/x64-release
+            msvc: true
+
+          - name: Linux GCC
+            os: ubuntu-latest
+            preset: linux-gcc-release
+            build_dir: out/build/linux-gcc-release
+
+          - name: macOS AppleClang
+            os: macos-latest
+            preset: macos-release
+            build_dir: out/build/macos-release
+
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v6
+
+      - name: Checkout vcpkg
+        run: git clone https://github.com/microsoft/vcpkg.git vcpkg
+
+      - name: Bootstrap vcpkg (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./vcpkg/bootstrap-vcpkg.bat -disableMetrics
+
+      - name: Bootstrap vcpkg (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+
+      - name: Set up MSVC
+        if: matrix.msvc
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Configure
+        run: cmake --preset "${{ matrix.preset }}"
+
+      - name: Build
+        run: cmake --build "${{ matrix.build_dir }}" --parallel
+
+      - name: Test
+        run: ctest --test-dir "${{ matrix.build_dir }}" --output-on-failure
