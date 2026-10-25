@@ -41,6 +41,16 @@ jobs:
       - name: Checkout vcpkg
         run: git clone https://github.com/microsoft/vcpkg.git vcpkg
 
+      - name: Restore vcpkg and build artifacts cache
+        uses: actions/cache@v4
+        with:
+            path: |
+              vcpkg/downloads
+              ${{ matrix.build_dir }}/vcpkg_installed
+            key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+            restore-keys: |
+              ${{ runner.os }}-vcpkg-
+
       - name: Bootstrap vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -56,6 +66,19 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
+
+      - name: Install Linux System Dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            libx11-dev \
+            libxi-dev \
+            libxrandr-dev \
+            libxcursor-dev \
+            libudev-dev \
+            libgl1-mesa-dev
+
 
       - name: Configure
         run: cmake --preset "${{ matrix.preset }}"
