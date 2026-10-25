@@ -5,7 +5,6 @@
 #include "Combat/Structure/Stats.hpp"
 #include "Combat/Structure/CombatSkill.hpp"
 #include "Combat/Structure/Spell.hpp"
-#include "Combat/Structure/CombatAction.hpp"
 
 
 class PartyMember : public Combatable {
@@ -15,9 +14,11 @@ class PartyMember : public Combatable {
     std::vector<Spell> spells;
 
   public:
+	PartyMember(const Stats& stats, const std::vector<CombatSkill>& combatSkills, const std::vector<Spell>& spells)
+		: stats(stats), combatSkills(combatSkills), spells(spells) {}
+
     const Stats& getStats() const override;
 	const std::vector<Spell>& getSpells() const override;
 	const std::vector<CombatSkill>& getCombatSkills() const override;
-    CombatAction chooseAction() override;
 
 };

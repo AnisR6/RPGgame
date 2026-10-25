@@ -11,6 +11,11 @@ class BattleState {
 		std::vector<Enemy> enemies;
 
 	public:
+
+		const std::vector<PartyMember>& getPartyMembers() const;
+		std::vector<PartyMember>& getPartyMembers();
+		const std::vector<Enemy>& getEnemies() const;
+		std::vector<Enemy>& getEnemies();
 		bool won() const;
 		bool lost() const;
 

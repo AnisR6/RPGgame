@@ -11,7 +11,3 @@ const std::vector<Spell>& PartyMember::getSpells() const {
 const std::vector<CombatSkill> & PartyMember::getCombatSkills() const{
 	return combatSkills;
 }
-
-CombatAction PartyMember::chooseAction() {
-
-};

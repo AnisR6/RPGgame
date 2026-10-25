@@ -1,12 +1,11 @@
 #pragma once
 #include <vector>
+#include <algorithm>
 
 #include "../Combat/Structure/Stats.hpp"
 #include "../Combat/Structure/Spell.hpp"
 #include "../Combat/Structure/CombatSkill.hpp"
-#include "../Combat/Structure/CombatAction.hpp"
 
-#include <algorithm>
 
 class Combatable {
     public:
@@ -14,7 +13,6 @@ class Combatable {
 		virtual const Stats& getStats() const = 0;
 		virtual const std::vector<Spell>& getSpells() const = 0;
 		virtual const std::vector<CombatSkill>& getCombatSkills() const = 0;
-        virtual CombatAction chooseAction() = 0;
         virtual ~Combatable() = default;
 
 		bool isAlive() const {
