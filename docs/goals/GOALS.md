@@ -1,4 +1,9 @@
-All 
+# Goals
+
+Point split for the classic RPG (overworld + JRPG combat). Stealth mechanics are out of scope.
+
+```text
+All
     Audio (1 point)
 
     Mauracher (4 points)
@@ -13,3 +18,6 @@ All
     Habili (3 points)
         - Overworld (2 point)
         - Save points (1 point)
+```
+
+Source of truth for the split also lives in `goal_split.txt`.

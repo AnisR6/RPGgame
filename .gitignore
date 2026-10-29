@@ -362,6 +362,13 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-# CLion and VSCode
-.idea/
+# clangd / IDE compile database (lives under build/; root symlink is local-only)
+compile_commands.json
+.cache/
+
+# IDE
+.cursor/
 .vscode/
+.idea/
+.DS_Store
+**/.DS_Store
