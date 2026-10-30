@@ -13,7 +13,7 @@ class Enemy : public Combatable {
 	std::vector<Spell> spells;
 
   public:
-	const Stats &getStats() const override;
-	const std::vector<Spell> &getSpells() const override;
-	const std::vector<CombatSkill> &getCombatSkills() const override;
+	[[nodiscard]] const Stats &getStats() const override;
+	[[nodiscard]] const std::vector<Spell> &getSpells() const override;
+	[[nodiscard]] const std::vector<CombatSkill> &getCombatSkills() const override;
 };

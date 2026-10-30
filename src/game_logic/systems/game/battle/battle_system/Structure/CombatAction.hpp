@@ -7,11 +7,13 @@ enum ActionType { BASE_ATTACK, SPELL, SKILL, INVENTORY, FLIGHT };
 
 struct CombatAction {
   private:
-	void handleBaseAttack();
+	void handleBaseAttack() const;
 	void handleSpell();
 	void handleSkill();
 	void handleInventory();
 	void handleFlight();
+
+	static int compute_physical_damage(int actor_atk, int target_def);
 
   public:
 	Combatable *actor = nullptr;

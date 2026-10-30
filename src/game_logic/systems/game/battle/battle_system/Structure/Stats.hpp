@@ -1,19 +1,19 @@
 #pragma once
 
 struct Stats {
-	unsigned maxHP;
-	unsigned maxMP;
-	unsigned currHP;
-	unsigned currMP;
-	unsigned attack;
-	unsigned defense;
-	unsigned magic;
-	unsigned resistence;
-	unsigned skill;
-	unsigned speed;
+	int maxHP;
+	int maxMP;
+	int currHP;
+	int currMP;
+	int attack;
+	int defense;
+	int magic;
+	int resistence;
+	int skill;
+	int speed;
 
-	Stats(unsigned maxHP, unsigned maxMP, unsigned currHP, unsigned currMP, unsigned attack, unsigned defense,
-	      unsigned magic, unsigned resistence, unsigned skill, unsigned speed)
+	Stats(const int maxHP, const int maxMP, const int currHP, const int currMP, const int attack, const int defense,
+	      const int magic, const int resistence, const int skill, const int speed)
 	    : maxHP(maxHP), maxMP(maxMP), currHP(currHP), currMP(currMP), attack(attack), defense(defense), magic(magic),
 	      resistence(resistence), skill(skill), speed(speed)
 	{
