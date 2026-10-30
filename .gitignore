@@ -361,3 +361,13 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# clangd / IDE compile database (lives under build/; root symlink is local-only)
+compile_commands.json
+.cache/
+
+# IDE
+.cursor/
+.vscode/
+.DS_Store
+**/.DS_Store
