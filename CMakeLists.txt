@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 find_package(ImGui-SFML CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED) # added for tiled map
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)  
 add_executable(RPGgame ${SOURCES})  # building game from all collected cpp files in source 
@@ -20,3 +21,4 @@ target_include_directories(RPGgame PRIVATE src)   # src as starting point for in
 
 target_link_libraries(RPGgame PRIVATE SFML::Network SFML::Graphics SFML::Window SFML::Audio SFML::System)
 target_link_libraries(RPGgame PRIVATE ImGui-SFML::ImGui-SFML)
+target_link_libraries(RPGgame PRIVATE nlohmann_json::nlohmann_json) # added for tiled map

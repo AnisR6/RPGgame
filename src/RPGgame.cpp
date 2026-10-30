@@ -1,32 +1,42 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
+#include <optional>
 
-int main(int, char**) {
+#include "overworld/Player.hpp"
+#include "overworld/TileMap.hpp"
 
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "RPGgame");
-    window.setFramerateLimit(60);
+// full paths for the moments :/ will fix this later
+const char *mapFilePath = "C:/Users/BAB AL SAFA/source/repos/RPGgame/assests/maps/demo_map1.json";
+const char *tilesetFolderPath = "C:/Users/BAB AL SAFA/source/repos/RPGgame/assests/tilesets";
+const char *playerSpriteSheetPath = "C:/Users/BAB AL SAFA/source/repos/RPGgame/assests/tilesets/Player.png";
 
-    sf::CircleShape circle(40.f);
-    circle.setFillColor(sf::Color::Green);
-    circle.setPosition({100.f, 100.f});
+int main()
+{
+	sf::RenderWindow window(sf::VideoMode({960, 640}), "mini RPG demo");
+	window.setFramerateLimit(60);
 
-    sf::RectangleShape rect ({120.f, 60.f});
-    rect.setFillColor(sf::Color(200, 50, 50));
-    rect.setPosition({400.f, 300.f});
+	TileMap tileMap(mapFilePath, tilesetFolderPath);
 
-    while (window.isOpen()) {
-        while (const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-            }
-        }
+	Player player(sf::Vector2f(100.0f, 100.0f), playerSpriteSheetPath);
 
-        window.clear(sf::Color(30, 30, 40));
-        window.draw(circle);
-        window.draw(rect);
-        window.display();
-    }
+	sf::Clock frameClock;
 
+	while (window.isOpen()) {
 
-    return 0;
+		// 1. Input
+		while (const std::optional event = window.pollEvent()) {
+			if (event->is<sf::Event::Closed>()) {
+				window.close();
+			}
+		}
+
+		// 2. Update
+		const float secondsSinceLastFrame = frameClock.restart().asSeconds();
+		player.update(secondsSinceLastFrame, tileMap);
+
+		// 3. Draw
+		window.clear();
+		tileMap.render(window);
+		player.render(window);
+		window.display();
+	}
 }
