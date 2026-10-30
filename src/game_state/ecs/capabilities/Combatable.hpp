@@ -2,9 +2,9 @@
 #include <algorithm>
 #include <vector>
 
-#include "../Combat/Structure/CombatSkill.hpp"
-#include "../Combat/Structure/Spell.hpp"
-#include "../Combat/Structure/Stats.hpp"
+#include "game_logic/systems/game/battle/battle_system/Structure/CombatSkill.hpp"
+#include "game_logic/systems/game/battle/battle_system/Structure/Spell.hpp"
+#include "game_logic/systems/game/battle/battle_system/Structure/Stats.hpp"
 
 class Combatable {
   public:

@@ -1,4 +1,4 @@
-#include "Combat/Party/PartyMember.hpp"
+#include "game_logic/systems/game/battle/battle_system/Party/PartyMember.hpp"
 
 const Stats &PartyMember::getStats() const
 {

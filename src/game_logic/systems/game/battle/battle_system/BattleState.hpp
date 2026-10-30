@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 
-#include "Combat/Enemy/Enemy.hpp"
-#include "Combat/Party/PartyMember.hpp"
+#include "game_logic/systems/game/battle/battle_system/Enemy/Enemy.hpp"
+#include "game_logic/systems/game/battle/battle_system/Party/PartyMember.hpp"
 
 class BattleState {
   private:

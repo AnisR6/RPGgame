@@ -1,7 +1,5 @@
 #include "Enemy.hpp"
 
-#include "Combat/Structure/CombatAction.hpp"
-
 const Stats &Enemy::getStats() const
 {
 	return stats;

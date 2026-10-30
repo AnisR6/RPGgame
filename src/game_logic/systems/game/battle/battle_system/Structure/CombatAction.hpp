@@ -1,5 +1,5 @@
 #pragma once
-#include "Ability/Combatable.hpp"
+#include "game_state/ecs/capabilities/Combatable.hpp"
 #include <utility>
 #include <vector>
 
