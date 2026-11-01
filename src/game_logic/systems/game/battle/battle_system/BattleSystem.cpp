@@ -25,6 +25,6 @@ void BattleSystem::executeRound()
 	std::sort(roundActions.begin(), roundActions.end());
 
 	for (auto &action : roundActions) {
-		// evalCombatAction(action);
+		action.evalCombatAction();
 	}
 }
