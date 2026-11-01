@@ -52,4 +52,5 @@ struct CombatAction {
 
 	void evalCombatAction();
 	bool operator<(const CombatAction &other) const noexcept;
+	bool operator>(const CombatAction &other) const noexcept;
 };

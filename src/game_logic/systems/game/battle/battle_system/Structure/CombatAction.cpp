@@ -5,6 +5,11 @@ bool CombatAction::operator<(const CombatAction &other) const noexcept
 	return actor->getStats().speed < other.actor->getStats().speed;
 }
 
+bool CombatAction::operator>(const CombatAction &other) const noexcept
+{
+	return actor->getStats().speed > other.actor->getStats().speed;
+}
+
 template <typename F>
 void CombatAction::applyToTargets(F &&func) const
 {

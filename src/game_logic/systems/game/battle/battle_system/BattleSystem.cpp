@@ -22,9 +22,11 @@ void BattleSystem::executeRound()
 	getEnemyActions(roundActions);
 
 	// sort actions by speed
-	std::sort(roundActions.begin(), roundActions.end());
+	std::ranges::sort(roundActions, std::greater<CombatAction>{});
 
 	for (auto &action : roundActions) {
-		action.evalCombatAction();
+		if (action.actor != nullptr && action.actor->isAlive()) {
+			action.evalCombatAction();
+		}
 	}
 }
