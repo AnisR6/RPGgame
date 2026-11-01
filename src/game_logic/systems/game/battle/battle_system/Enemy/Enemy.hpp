@@ -7,13 +7,18 @@
 #include "game_state/ecs/capabilities/Combatable.hpp"
 
 class Enemy : public Combatable {
-  private:
+  protected:
 	Stats stats;
 	std::vector<CombatSkill> combatSkills;
 	std::vector<Spell> spells;
 
   public:
+	Enemy(const Stats &stats, const std::vector<CombatSkill> &combatSkills, const std::vector<Spell> &spells)
+	    : stats(stats), combatSkills(combatSkills), spells(spells)
+	{
+	}
 	[[nodiscard]] const Stats &getStats() const override;
+	Stats &getStats() override;
 	[[nodiscard]] const std::vector<Spell> &getSpells() const override;
 	[[nodiscard]] const std::vector<CombatSkill> &getCombatSkills() const override;
 };

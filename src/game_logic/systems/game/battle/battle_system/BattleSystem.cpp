@@ -1,14 +1,29 @@
 #include "BattleSystem.hpp"
 #include <algorithm>
 
-void BattleSystem::getPartyMemberActions(std::vector<CombatAction> &roundActions)
+void BattleSystem::handlePlayerInputForCurrentPartyMember(ActionType type, std::vector<Combatable *> targets,
+                                                          const Spell *spell, const CombatSkill *skill)
 {
-	for (auto &partyMember : battleState.getPartyMembers()) {
-		// consult some interface that gets player actions through gui input
+	auto &party = battleState.getPartyMembers();
+	auto &currentPartyMember = party[currentPartyMemberIndex];
+
+	if (type == ActionType::SPELL && spell != nullptr) {
+		roundActions.emplace_back(CombatAction::createSpellAction(&currentPartyMember, std::move(targets), *spell));
+	} else if (type == ActionType::SKILL && skill != nullptr) {
+		roundActions.emplace_back(CombatAction::createSkillAction(&currentPartyMember, std::move(targets), *skill));
+	} else {
+		roundActions.emplace_back(&currentPartyMember, type, std::move(targets));
+	}
+
+	currentPartyMemberIndex++;
+
+	if (currentPartyMemberIndex >= party.size()) {
+		currentPartyMemberIndex = 0;
+		executeRound();
 	}
 }
 
-void BattleSystem::getEnemyActions(std::vector<CombatAction> &roundActions)
+void BattleSystem::getEnemyActions()
 {
 	for (auto &enemy : battleState.getEnemies()) {
 		// consult enemy ai to choose an action
@@ -17,9 +32,7 @@ void BattleSystem::getEnemyActions(std::vector<CombatAction> &roundActions)
 
 void BattleSystem::executeRound()
 {
-	std::vector<CombatAction> roundActions;
-	getPartyMemberActions(roundActions);
-	getEnemyActions(roundActions);
+	getEnemyActions();
 
 	// sort actions by speed
 	std::ranges::sort(roundActions, std::greater<CombatAction>{});
@@ -29,4 +42,5 @@ void BattleSystem::executeRound()
 			action.evalCombatAction();
 		}
 	}
+	roundActions.clear();
 }

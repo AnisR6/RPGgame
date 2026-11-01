@@ -5,6 +5,11 @@ const Stats &PartyMember::getStats() const
 	return stats;
 };
 
+Stats &PartyMember::getStats()
+{
+	return stats;
+}
+
 const std::vector<Spell> &PartyMember::getSpells() const
 {
 	return spells;

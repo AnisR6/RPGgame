@@ -5,6 +5,11 @@ const Stats &Enemy::getStats() const
 	return stats;
 }
 
+Stats &Enemy::getStats()
+{
+	return stats;
+}
+
 const std::vector<Spell> &Enemy::getSpells() const
 {
 	return spells;

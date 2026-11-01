@@ -2,12 +2,19 @@
 
 #include "BattleState.hpp"
 #include "Structure/CombatAction.hpp"
+#include "Structure/CombatSkill.hpp"
+#include "Structure/Spell.hpp"
+#include "game_state/ecs/capabilities/Combatable.hpp"
 
 class BattleSystem {
   private:
 	BattleState battleState;
-	void getPartyMemberActions(std::vector<CombatAction> &roundActions);
-	void getEnemyActions(std::vector<CombatAction> &roundActions);
+	int currentPartyMemberIndex = 0;
+	std::vector<CombatAction> roundActions;
+
+	void handlePlayerInputForCurrentPartyMember(ActionType type, std::vector<Combatable *> targets, const Spell *spell,
+	                                            const CombatSkill *skill);
+	void getEnemyActions();
 
   public:
 	void executeRound();

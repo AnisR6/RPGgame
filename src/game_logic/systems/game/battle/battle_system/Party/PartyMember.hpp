@@ -7,7 +7,7 @@
 #include "game_state/ecs/capabilities/Combatable.hpp"
 
 class PartyMember : public Combatable {
-  private:
+  protected:
 	Stats stats;
 	std::vector<CombatSkill> combatSkills;
 	std::vector<Spell> spells;
@@ -18,7 +18,8 @@ class PartyMember : public Combatable {
 	{
 	}
 
-	const Stats &getStats() const override;
-	const std::vector<Spell> &getSpells() const override;
-	const std::vector<CombatSkill> &getCombatSkills() const override;
+	[[nodiscard]] const Stats &getStats() const override;
+	Stats &getStats() override;
+	[[nodiscard]] const std::vector<Spell> &getSpells() const override;
+	[[nodiscard]] const std::vector<CombatSkill> &getCombatSkills() const override;
 };
