@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master, dev]
+    branches: [ master, dev ]
   pull_request:
-    branches: [master, dev]
+    branches: [ master, dev ]
 
 jobs:
   build:
@@ -33,23 +33,24 @@ jobs:
 
     env:
       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg/bincache
 
     steps:
       - name: Checkout project
         uses: actions/checkout@v6
 
       - name: Checkout vcpkg
-        run: git clone https://github.com/microsoft/vcpkg.git vcpkg
+        run: git clone --depth 1 https://github.com/microsoft/vcpkg.git vcpkg
 
       - name: Restore vcpkg and build artifacts cache
         uses: actions/cache@v4
         with:
-            path: |
-              vcpkg/downloads
-              ${{ matrix.build_dir }}/vcpkg_installed
-            key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
-            restore-keys: |
-              ${{ runner.os }}-vcpkg-
+          path: |
+            vcpkg/downloads
+            ${{ matrix.build_dir }}/vcpkg_installed
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
 
       - name: Bootstrap vcpkg (Windows)
         if: runner.os == 'Windows'
@@ -77,7 +78,8 @@ jobs:
             libxrandr-dev \
             libxcursor-dev \
             libudev-dev \
-            libgl1-mesa-dev
+            libgl1-mesa-dev \
+            libopenal-dev
 
 
       - name: Configure
