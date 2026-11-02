@@ -45,3 +45,26 @@ TEST_CASE("Speed-based CombatAction sorting", "[combat]")
 		REQUIRE(actions[1].actor == &hero);
 	}
 }
+
+TEST_CASE("CombatAction healing", "[combat]")
+{
+	constexpr Stats heroStats{.speed = 15};
+
+	constexpr Stats enemyStats{.speed = 20};
+
+	TestHero hero{heroStats};
+	TestEnemy enemy{enemyStats};
+
+	SECTION("Health spell restores HP")
+	{
+		Spell healingSpell{.spellType = SpellType::HEALTH, .consumedMP = 10, .power = 30};
+		enemy.takeDamage(50);
+
+		CombatAction action = CombatAction::createSpellAction(&hero, {&enemy}, healingSpell);
+
+		action.evalCombatAction();
+
+		REQUIRE(enemy.getStats().currHP == 80);
+		REQUIRE(hero.getStats().currMP == heroStats.currMP - 10);
+	}
+}
