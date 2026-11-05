@@ -47,6 +47,7 @@ jobs:
         with:
           path: |
             vcpkg/downloads
+            vcpkg/bincache
             ${{ matrix.build_dir }}/vcpkg_installed
           key: ${{ runner.os }}-vcpkg-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
@@ -81,16 +82,8 @@ jobs:
             libgl1-mesa-dev \
             libopenal-dev
 
-
-      - name: Install Ninja (All Platforms)
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            choco install ninja -y
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-            brew install ninja
-          elif [ "$RUNNER_OS" == "Linux" ]; then
-            sudo apt install -y ninja-build
-          fi
+      - name: Create vcpkg binary cache directory
+        run: mkdir -p "${{ github.workspace }}/vcpkg/bincache"
 
       - name: Configure
         run: cmake --preset "${{ matrix.preset }}"
