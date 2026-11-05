@@ -43,7 +43,7 @@ jobs:
         run: git clone https://github.com/microsoft/vcpkg.git vcpkg
 
       - name: Restore vcpkg and build artifacts cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             vcpkg/downloads
