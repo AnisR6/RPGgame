@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Checkout vcpkg
-        run: git clone --depth 1 https://github.com/microsoft/vcpkg.git vcpkg
+        run: git clone https://github.com/microsoft/vcpkg.git vcpkg
 
       - name: Restore vcpkg and build artifacts cache
         uses: actions/cache@v4
@@ -81,6 +81,16 @@ jobs:
             libgl1-mesa-dev \
             libopenal-dev
 
+
+      - name: Install Ninja (All Platforms)
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            choco install ninja -y
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install ninja
+          elif [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt install -y ninja-build
+          fi
 
       - name: Configure
         run: cmake --preset "${{ matrix.preset }}"
