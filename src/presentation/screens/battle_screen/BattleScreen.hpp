@@ -4,6 +4,13 @@
 class BattleScreen : public Screen {
   private:
 	BattleScreen();
+	std::unique_ptr<Widget> createMainBattleMenu();
+	template <typename T>
+	std::unique_ptr<Widget> createSubMenu(std::vector<T> &subMenuEntry);
+
+	void showMain();
+	template <typename T>
+	void showSubMenu();
 
   public:
 	static BattleScreen &getInstance();

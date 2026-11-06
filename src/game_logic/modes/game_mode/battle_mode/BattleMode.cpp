@@ -1,18 +1,15 @@
 #include "BattleMode.hpp"
 
-std::optional<MessageEvent> BattleMode::translate(const sf::Event &event)
+void BattleMode::handleEvent(BattleModeEvent &battleModeEvent) const
 {
-	if (event.is<sf::Event::KeyPressed>()) {
-		if (menuLayer == BattleMenuLayer::MAIN_COMBAT_ACTIONS) {
+	std::visit(
+	    [this](auto &&event) {
+		    using T = std::decay_t<decltype(battleModeEvent)>;
 
-		} else if (menuLayer == BattleMenuLayer::SPELL_SELECTION) {
+		    if constexpr (std::is_same_v<T, BattleInitEvent>) {
 
-		} else if (menuLayer == BattleMenuLayer::SKILL_SELECTION) {
-
-		} else if (menuLayer == BattleMenuLayer::INVENTORY_SELECTION) {
-
-		} else if (menuLayer == BattleMenuLayer::TARGET_SELECTION) {
-		}
-	}
-	return std::nullopt;
+		    } else if constexpr (std::is_same_v<T, CombatActionEvent>) {
+		    }
+	    },
+	    battleModeEvent);
 }
