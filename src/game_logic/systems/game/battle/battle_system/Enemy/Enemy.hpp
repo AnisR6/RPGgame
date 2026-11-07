@@ -9,6 +9,7 @@
 class Enemy : public Combatable {
   protected:
 	Stats stats;
+	std::string name;
 	std::vector<CombatSkill> combatSkills;
 	std::vector<Spell> spells;
 
@@ -21,4 +22,5 @@ class Enemy : public Combatable {
 	Stats &getStats() override;
 	[[nodiscard]] const std::vector<Spell> &getSpells() const override;
 	[[nodiscard]] const std::vector<CombatSkill> &getCombatSkills() const override;
+	[[nodiscard]] std::string getName() const;
 };

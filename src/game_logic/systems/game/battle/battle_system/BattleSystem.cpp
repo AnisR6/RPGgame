@@ -41,6 +41,20 @@ void BattleSystem::executeRound()
 		if (action.actor != nullptr && action.actor->isAlive()) {
 			action.evalCombatAction();
 		}
+
+		if (battleState.won() || battleState.lost()) {
+			break;
+		}
 	}
 	roundActions.clear();
+}
+
+const std::vector<PartyMember> &BattleSystem::getPartyMembers() const
+{
+	return battleState.getPartyMembers();
+}
+
+const std::vector<Enemy> &BattleSystem::getEnemies() const
+{
+	return battleState.getEnemies();
 }

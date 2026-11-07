@@ -19,3 +19,8 @@ const std::vector<CombatSkill> &PartyMember::getCombatSkills() const
 {
 	return combatSkills;
 }
+
+std::string PartyMember::getName() const
+{
+	return name;
+}

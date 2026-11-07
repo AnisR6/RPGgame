@@ -1,15 +1,18 @@
 #pragma once
 
-#include "application/bus/BattleModeEventBus.hpp"
-#include "game_logic/modes/game_mode/battle_mode/BattleMode.hpp"
-
-#include <memory>
+#include "application/battle/CombatantInfo.hpp"
+#include "application/bus/BattleMessageBus.hpp"
+#include "application/callbacks/BattleMenuCallbacks.hpp"
 
 class BattleController {
   private:
-	BattleModeEventBus battleModeEventBus;
-	std::unique_ptr<BattleMode> battleMode;
+	BattleMessageBus &battleMessageBus;
+	std::vector<CombatantInfo> partyMembers;
+	std::vector<CombatantInfo> enemies;
+	BattleMenuCallbacks callbacks;
+	void setCallbacksForBattleScreen();
 
   public:
-	void update(float dt);
+	explicit BattleController(BattleMessageBus &eventBus);
+	void initBattle();
 };

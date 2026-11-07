@@ -17,5 +17,7 @@ class BattleSystem {
 	void getEnemyActions();
 
   public:
+	[[nodiscard]] const std::vector<PartyMember> &getPartyMembers() const;
+	[[nodiscard]] const std::vector<Enemy> &getEnemies() const;
 	void executeRound();
 };

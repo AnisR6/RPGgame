@@ -1,15 +1,24 @@
 #include "BattleMode.hpp"
 
-void BattleMode::handleEvent(BattleModeEvent &battleModeEvent) const
+BattleMode::BattleMode(BattleMessageBus &eventBus) : battleModeEventBus(eventBus)
 {
-	std::visit(
-	    [this](auto &&event) {
-		    using T = std::decay_t<decltype(battleModeEvent)>;
+	eventBus.subscribe<BattleInfoRequest>(
+	    [this](const BattleInfoRequest &request) { handleBattleInitRequest(request); });
 
-		    if constexpr (std::is_same_v<T, BattleInitEvent>) {
+	eventBus.subscribe<CombatActionRequest>(
+	    [this](const CombatActionRequest &request) { handleCombatActionRequest(request); });
+}
 
-		    } else if constexpr (std::is_same_v<T, CombatActionEvent>) {
-		    }
-	    },
-	    battleModeEvent);
+void BattleMode::handleBattleInitRequest(const BattleInfoRequest &battleInfoRequest) {}
+
+void BattleMode::handleCombatActionRequest(const CombatActionRequest &combatActionEvent) {}
+
+const std::vector<PartyMember> &BattleMode::getCurrentPartyMembers() const
+{
+	return battleSystem.getPartyMembers();
+}
+
+const std::vector<Enemy> &BattleMode::getCurrentEnemies() const
+{
+	return battleSystem.getEnemies();
 }

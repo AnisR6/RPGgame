@@ -19,3 +19,8 @@ const std::vector<CombatSkill> &Enemy::getCombatSkills() const
 {
 	return combatSkills;
 }
+
+std::string Enemy::getName() const
+{
+	return name;
+}
