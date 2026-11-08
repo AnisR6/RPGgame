@@ -83,6 +83,7 @@ jobs:
             libopenal-dev
 
       - name: Create vcpkg binary cache directory
+        shell: bash
         run: mkdir -p "${{ github.workspace }}/vcpkg/bincache"
 
       - name: Configure
