@@ -6,6 +6,7 @@
 #include <vector>
 
 struct CombatantInfo {
+	int id;
 	std::string name;
 	int currHP;
 	int maxHP;

@@ -1,4 +1,5 @@
 #include "BattleMapper.hpp"
+#include <iterator>
 
 #include <algorithm>
 #include <iterator>
