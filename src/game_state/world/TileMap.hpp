@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -19,7 +20,6 @@ class TileMap {
 	void render(sf::RenderTarget &target) const;
 
 	bool isSolidTile(int tileX, int tileY) const;
-
 	int getTileSizeInPixels() const { return tileSizeInPixels_; }
 	int getWidthInTiles() const { return widthInTiles_; }
 	int getHeightInTiles() const { return heightInTiles_; }
@@ -30,6 +30,7 @@ class TileMap {
 	int widthInTiles_ = 0;
 	int heightInTiles_ = 0;
 	int tileSizeInPixels_ = 32;
-	std::vector<int> tileNumbers_; // one number per map cell, row after row (0 = empty)
+	std::vector<std::vector<int>> tileLayers_; // one list of tile numbers per tile layer, bottom layer first
+	std::set<int> solidTileNumbers_;           // tile numbers marked "solid" in Tiled
 	std::vector<Tileset> tilesets_;
 };

@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include "game_logic/modes/game_mode/overworld_mode/OverworldMode.hpp"
 #include "presentation/rendering/FontManager.hpp"
 #include "presentation/rendering/Renderer.hpp"
 #include "presentation/screens/boot_screen/MainMenuScreen.hpp"
@@ -13,6 +14,7 @@ constexpr unsigned window_height = 720;
 constexpr unsigned framerate_limit = 60;
 const char *window_title = "Contract";
 const char *geneva_font_path = "assets/fonts/Geneva.ttf";
+constexpr bool debugStartInOverworld = true;
 } // namespace
 
 int main()
@@ -26,14 +28,25 @@ int main()
 	Renderer renderer(fonts);
 	Screen &activeScreen = MainMenuScreen::getInstance();
 
+	OverworldMode overworldMode;
+	sf::Clock frameClock;
+
 	while (window.isOpen()) {
 		while (const std::optional event = window.pollEvent()) {
 			if (event->is<sf::Event::Closed>()) {
 				window.close();
 			}
 		}
+		if (debugStartInOverworld) {
+			const float secondsSinceLastFrame = frameClock.restart().asSeconds();
+			overworldMode.update(secondsSinceLastFrame);
 
-		renderer.render(window, activeScreen);
+			window.clear();
+			overworldMode.render(window);
+			window.display();
+		} else {
+			renderer.render(window, activeScreen);
+		}
 	}
 
 	return 0;

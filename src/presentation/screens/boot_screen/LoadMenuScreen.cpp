@@ -17,7 +17,7 @@ LoadMenuScreen::LoadMenuScreen()
 	                                            button(onPressed([] {}), text("Load 1", 28, sf::Color::White)),
 	                                            button(onPressed([] {}), text("Load 2", 28, sf::Color::White)),
 	                                            button(onPressed([] {}), text("Load 3", 28, sf::Color::White)),
-	                                            button(onPressed([] {}), text("Back", 28, sf::Color::White)))),
-	                            {.background = sf::Color::Black, .fillParent = true})))
+	                                            button(onPressed([] {}), text("Back", 28, sf::Color::White))))),
+	                            {.background = sf::Color::Black, .fillParent = true}))
 {
 }

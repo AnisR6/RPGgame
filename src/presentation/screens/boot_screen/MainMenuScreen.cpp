@@ -17,7 +17,7 @@ MainMenuScreen::MainMenuScreen()
 	                                            button(onPressed([] {}), text("Start Game", 28, sf::Color::White)),
 	                                            button(onPressed([] {}), text("Load Game", 28, sf::Color::White)),
 	                                            button(onPressed([] {}), text("Controls", 28, sf::Color::White)),
-	                                            button(onPressed([] {}), text("Exit Game", 28, sf::Color::White)))),
-	                            {.background = sf::Color::Black, .fillParent = true})))
+	                                            button(onPressed([] {}), text("Exit Game", 28, sf::Color::White))))),
+	                            {.background = sf::Color::Black, .fillParent = true}))
 {
 }
