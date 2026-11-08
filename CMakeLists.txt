@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
 find_package(ImGui-SFML CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED) # Tiled maps
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 list(FILTER SOURCES EXCLUDE REGEX "/Main\\.cpp$")
@@ -31,12 +32,12 @@ target_link_libraries(game_logic PUBLIC
         SFML::Audio
         SFML::System
         ImGui-SFML::ImGui-SFML
+        nlohmann_json::nlohmann_json
 )
 
 target_link_libraries(RPGgame PRIVATE
         game_logic
 )
-
 
 add_custom_command(
         TARGET RPGgame
