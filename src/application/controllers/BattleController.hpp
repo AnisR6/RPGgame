@@ -9,12 +9,14 @@ class BattleController {
 	BattleMessageBus &battleMessageBus;
 	std::vector<CombatantInfo> partyMembers;
 	std::vector<CombatantInfo> enemies;
+	std::size_t currentPartyMemberIndex = 0;
+
 	BattleMenuCallbacks callbacks;
 	void setCallbacksForBattleScreen();
-	void setBattleInfoForBattleScreen();
+	void setBattleInfoForBattleScreen() const;
 	void updateBattleInfo(const BattleInfoResponse &response);
 
   public:
-	explicit BattleController(BattleMessageBus &eventBus);
+	explicit BattleController(BattleMessageBus &messageBus);
 	void initBattle();
 };

@@ -4,25 +4,18 @@
 
 #include <variant>
 
-enum class CombatantType { PARTY_MEMBER, ENEMY };
-// identify actors and targets within their CombatantInfo vectors
-struct CombatantId {
-	CombatantType type;
-	std::size_t index;
-};
-
-// this event gets all spells, skills, items in inventory, etc.
+// this request gets all spells, skills, items in inventory, etc.
 // when the battle starts
 struct BattleInfoRequest {};
 
 struct BattleInfoResponse {
 	std::vector<CombatantInfo> playerPartyInfo;
 	std::vector<CombatantInfo> enemyPartyInfo;
+	std::size_t currentPartyMemberIndex;
 };
 
 struct CombatActionRequest {
-	CombatantId actor;
-	std::vector<CombatantId> targets;
+	std::vector<int> targets;
 	ActionType actionType = ActionType::BASE_ATTACK;
 	int actionId = -1;
 };

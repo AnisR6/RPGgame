@@ -9,7 +9,7 @@ class BattleMessageBus {
 	std::vector<std::function<void(const BattleMessage &)>> subscribers;
 
   public:
-	void publish(const BattleMessage &event) const;
+	void publish(const BattleMessage &message) const;
 	template <typename T>
 	void subscribe(std::function<void(const T &)> callback);
 	void clear();
