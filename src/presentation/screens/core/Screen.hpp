@@ -23,4 +23,12 @@ class Screen {
 	[[nodiscard]] Widget &getRootWidget() { return *rootWidget; }
 
 	[[nodiscard]] const Widget &getRootWidget() const { return *rootWidget; }
+
+	void setRootWidget(std::unique_ptr<Widget> newRoot)
+	{
+		if (!newRoot) {
+			throw std::invalid_argument("Screen requires a valid root widget!");
+		}
+		rootWidget = std::move(newRoot);
+	}
 };

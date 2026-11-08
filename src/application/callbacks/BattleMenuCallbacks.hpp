@@ -4,9 +4,9 @@
 class BattleMenuCallbacks {
 
   public:
-	std::function<void()> onBaseAttack;
-	std::function<void(int)> onSpell;
-	std::function<void(int)> onSkill;
-	std::function<void(int)> onInventory;
+	std::function<void(std::vector<int> targetIds)> onBaseAttack;
+	std::function<void(std::vector<int> targetIds, int spellId)> onSpell;
+	std::function<void(std::vector<int> targetIds, int skillId)> onSkill;
+	std::function<void(std::vector<int> targetIds, int itemId)> onInventory;
 	std::function<void()> onFlight;
 };

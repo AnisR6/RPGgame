@@ -1,8 +1,8 @@
 #pragma once
+#include "TargetScope.hpp"
 #include <string>
 
 enum class SpellType { FIRE, LIGHTNING, WIND, HEALTH, STATUS };
-enum class TargetScope { SINGLE_ENEMY, ALL_ENEMIES, SINGLE_ALLIE, ALL_ALLIES, SELF };
 
 struct Spell {
 	int spellId;

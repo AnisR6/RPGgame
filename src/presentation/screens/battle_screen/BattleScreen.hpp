@@ -8,18 +8,23 @@ class BattleScreen : public Screen {
 	BattleScreen();
 	std::vector<CombatantInfo> playerPartyInfo;
 	std::vector<CombatantInfo> enemyPartyInfo;
-	std::size_t currentPartyMemberIndex;
+	std::size_t currentPartyMemberIndex = 0;
 
 	BattleMenuCallbacks callbacks;
 
 	std::unique_ptr<Widget> createMainBattleMenu();
 
-	template <typename T, typename GetId, typename GetName>
+	template <typename T, typename GetId, typename GetName, typename GetTargetScope>
 	std::unique_ptr<Widget> createSubMenu(const std::vector<T> &subMenuEntries,
-	                                      const std::function<void(int)> &onSelected, GetId getId, GetName getName);
+	                                      const std::function<void(std::vector<int>, int)> &onSelected, GetId getId,
+	                                      GetName getName, GetTargetScope getTargetScope);
+
+	std::unique_ptr<Widget> createTargetMenu(TargetScope targetScope,
+	                                         const std::function<void(std::vector<int>)> &onTargetSelected);
 	void showMain();
 	template <typename T>
 	void showSubMenu();
+	void showTargetMenu(TargetScope targetScope, const std::function<void(std::vector<int>)> &onTargetSelected);
 
   public:
 	static BattleScreen &getInstance();

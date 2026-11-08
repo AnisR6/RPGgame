@@ -1,4 +1,5 @@
 #include "BattleMapper.hpp"
+#include <iterator>
 
 CombatAction BattleMapper::mapToCombatAction(const CombatActionRequest &request)
 {
