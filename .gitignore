@@ -369,5 +369,6 @@ compile_commands.json
 # IDE
 .cursor/
 .vscode/
+.idea/
 .DS_Store
 **/.DS_Store
