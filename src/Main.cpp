@@ -14,7 +14,7 @@ constexpr unsigned window_height = 720;
 constexpr unsigned framerate_limit = 60;
 const char *window_title = "Contract";
 const char *geneva_font_path = "assets/fonts/Geneva.ttf";
-constexpr bool debugStartInOverworld = true;
+constexpr bool debugStartInOverworld = false;
 } // namespace
 
 int main()
