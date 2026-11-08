@@ -9,4 +9,6 @@ class BattleMapper {
 	static CombatAction mapToCombatAction(const CombatActionRequest &request);
 	static CombatantInfo mapToCombatantInfo(const PartyMember &partyMember);
 	static CombatantInfo mapToCombatantInfo(const Enemy &enemy);
+	template <typename T>
+	static std::vector<CombatantInfo> mapToCombatantInfos(const std::vector<T> &combatants);
 };

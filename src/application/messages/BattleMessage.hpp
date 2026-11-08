@@ -1,9 +1,15 @@
 #pragma once
 #include "application/battle/CombatantInfo.hpp"
 #include "game_logic/systems/game/battle/battle_system/Structure/CombatAction.hpp"
-#include "game_state/ecs/capabilities/Combatable.hpp"
 
 #include <variant>
+
+enum class CombatantType { PARTY_MEMBER, ENEMY };
+// identify actors and targets within their CombatantInfo vectors
+struct CombatantId {
+	CombatantType type;
+	std::size_t index;
+};
 
 // this event gets all spells, skills, items in inventory, etc.
 // when the battle starts
@@ -14,15 +20,11 @@ struct BattleInfoResponse {
 	std::vector<CombatantInfo> enemyPartyInfo;
 };
 
-// this event contains info for the chosen action and target after a party member took its turn
 struct CombatActionRequest {
-	Combatable *actor = nullptr;
-	std::vector<Combatable *> targets;
-
+	CombatantId actor;
+	std::vector<CombatantId> targets;
 	ActionType actionType = ActionType::BASE_ATTACK;
-
-	const Spell *spell = nullptr;
-	const CombatSkill *skill = nullptr;
+	int actionId = -1;
 };
 
 using BattleMessage = std::variant<BattleInfoRequest, BattleInfoResponse, CombatActionRequest>;

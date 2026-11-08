@@ -11,6 +11,8 @@ class BattleController {
 	std::vector<CombatantInfo> enemies;
 	BattleMenuCallbacks callbacks;
 	void setCallbacksForBattleScreen();
+	void setBattleInfoForBattleScreen();
+	void updateBattleInfo(const BattleInfoResponse &response);
 
   public:
 	explicit BattleController(BattleMessageBus &eventBus);

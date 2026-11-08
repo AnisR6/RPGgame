@@ -21,11 +21,11 @@ void BattleScreen::setCallbacks(BattleMenuCallbacks newCallbacks)
 }
 
 void BattleScreen::setBattleInfo(const std::vector<CombatantInfo> &playerParty,
-                                 const std::vector<CombatantInfo> &enemies, std::size_t partyMemberIndex)
+                                 const std::vector<CombatantInfo> &enemies, const std::size_t partyMemberIndex)
 {
 	playerPartyInfo = playerParty;
 	enemyPartyInfo = enemies;
-	this->currentPartyMemberIndex = partyMemberIndex;
+	currentPartyMemberIndex = partyMemberIndex;
 }
 
 BattleScreen::BattleScreen() : Screen(padding(24.f, menu(), {.background = sf::Color::Black, .fillParent = true}))

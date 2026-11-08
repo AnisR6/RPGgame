@@ -2,7 +2,9 @@
 
 CombatAction BattleMapper::mapToCombatAction(const CombatActionRequest &request)
 {
-	return CombatAction{request.actor, request.actionType, std::move(request.targets)};
+	// TODO: change from nullptr to real actor
+	// change from empty vector to real targets (via CombatantId)
+	return CombatAction{nullptr, request.actionType, std::vector<Combatable *>()};
 }
 
 CombatantInfo BattleMapper::mapToCombatantInfo(const PartyMember &partyMember)
@@ -27,4 +29,13 @@ CombatantInfo BattleMapper::mapToCombatantInfo(const Enemy &enemy)
 	                     .maxMP = stats.maxMP,
 	                     .spells = enemy.getSpells(),
 	                     .skills = enemy.getCombatSkills()};
+}
+
+template <typename T>
+std::vector<CombatantInfo> BattleMapper::mapToCombatantInfos(const std::vector<T> &combatants)
+{
+	std::vector<CombatantInfo> result;
+	result.reserve(combatants.size());
+	std::ranges::transform(combatants, std::back_inserter(result), [](const T &c) { return mapToCombatantInfo(c); });
+	return result;
 }

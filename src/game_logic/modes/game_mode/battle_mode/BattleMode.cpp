@@ -1,15 +1,20 @@
 #include "BattleMode.hpp"
 
-BattleMode::BattleMode(BattleMessageBus &eventBus) : battleModeEventBus(eventBus)
+BattleMode::BattleMode(BattleMessageBus &messageBus) : battleModeMessageBus(messageBus)
 {
-	eventBus.subscribe<BattleInfoRequest>(
-	    [this](const BattleInfoRequest &request) { handleBattleInitRequest(request); });
+	messageBus.subscribe<BattleInfoRequest>([this](const BattleInfoRequest &request) { handleBattleInitRequest(); });
 
-	eventBus.subscribe<CombatActionRequest>(
+	messageBus.subscribe<CombatActionRequest>(
 	    [this](const CombatActionRequest &request) { handleCombatActionRequest(request); });
 }
 
-void BattleMode::handleBattleInitRequest(const BattleInfoRequest &battleInfoRequest) {}
+void BattleMode::handleBattleInitRequest() const
+{
+	const auto playerPartyInfo = BattleMapper::mapToCombatantInfos(getCurrentPartyMembers());
+	const auto enemyPartyInfo = BattleMapper::mapToCombatantInfos(getCurrentEnemies());
+	BattleInfoResponse response{.playerPartyInfo = playerPartyInfo, .enemyPartyInfo = enemyPartyInfo};
+	battleModeMessageBus.publish(response);
+}
 
 void BattleMode::handleCombatActionRequest(const CombatActionRequest &combatActionEvent) {}
 

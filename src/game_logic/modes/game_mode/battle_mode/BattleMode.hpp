@@ -7,13 +7,13 @@ class BattleMode {
   private:
 	BattleSystem battleSystem;
 	BattleMapper battleMapper;
-	BattleMessageBus &battleModeEventBus;
+	BattleMessageBus &battleModeMessageBus;
 
 	[[nodiscard]] const std::vector<PartyMember> &getCurrentPartyMembers() const;
 	[[nodiscard]] const std::vector<Enemy> &getCurrentEnemies() const;
-	void handleBattleInitRequest(const BattleInfoRequest &battleInfoRequest);
+	void handleBattleInitRequest() const;
 	void handleCombatActionRequest(const CombatActionRequest &combatActionRequest);
 
   public:
-	explicit BattleMode(BattleMessageBus &eventBus);
+	explicit BattleMode(BattleMessageBus &messageBus);
 };
