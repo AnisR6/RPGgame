@@ -11,6 +11,9 @@ void BattleSystem::handlePlayerInputForCurrentPartyMember(const CombatAction &ac
 	if (currentPartyMemberIndex >= party.size()) {
 		currentPartyMemberIndex = 0;
 		executeRound();
+		// publish changes that occurred in this round and index = 0
+	} else {
+		// publish index for next party member only
 	}
 }
 
