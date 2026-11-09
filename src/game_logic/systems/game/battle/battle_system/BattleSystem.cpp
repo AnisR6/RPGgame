@@ -1,19 +1,10 @@
 #include "BattleSystem.hpp"
 #include <algorithm>
 
-void BattleSystem::handlePlayerInputForCurrentPartyMember(ActionType type, std::vector<Combatable *> targets,
-                                                          const Spell *spell, const CombatSkill *skill)
+void BattleSystem::handlePlayerInputForCurrentPartyMember(const CombatAction &action)
 {
-	auto &party = battleState.getPartyMembers();
-	auto &currentPartyMember = party[currentPartyMemberIndex];
-
-	if (type == ActionType::SPELL && spell != nullptr) {
-		roundActions.emplace_back(CombatAction::createSpellAction(&currentPartyMember, std::move(targets), *spell));
-	} else if (type == ActionType::SKILL && skill != nullptr) {
-		roundActions.emplace_back(CombatAction::createSkillAction(&currentPartyMember, std::move(targets), *skill));
-	} else {
-		roundActions.emplace_back(&currentPartyMember, type, std::move(targets));
-	}
+	const auto &party = battleState.getPartyMembers();
+	roundActions.push_back(action);
 
 	currentPartyMemberIndex++;
 

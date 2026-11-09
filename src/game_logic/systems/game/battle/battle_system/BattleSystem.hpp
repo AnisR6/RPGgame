@@ -12,12 +12,11 @@ class BattleSystem {
 	int currentPartyMemberIndex = 0;
 	std::vector<CombatAction> roundActions;
 
-	void handlePlayerInputForCurrentPartyMember(ActionType type, std::vector<Combatable *> targets, const Spell *spell,
-	                                            const CombatSkill *skill);
 	void getEnemyActions();
+	void executeRound();
 
   public:
 	[[nodiscard]] const std::vector<PartyMember> &getPartyMembers() const;
 	[[nodiscard]] const std::vector<Enemy> &getEnemies() const;
-	void executeRound();
+	void handlePlayerInputForCurrentPartyMember(const CombatAction &action);
 };

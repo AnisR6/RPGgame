@@ -16,7 +16,12 @@ void BattleMode::handleBattleInitRequest() const
 	battleModeMessageBus.publish(response);
 }
 
-void BattleMode::handleCombatActionRequest(const CombatActionRequest &combatActionEvent) {}
+void BattleMode::handleCombatActionRequest(const CombatActionRequest &combatActionRequest)
+{
+	// map to CombatAction
+	const CombatAction action = BattleMapper::mapToCombatAction(combatActionRequest);
+	battleSystem.handlePlayerInputForCurrentPartyMember(action);
+}
 
 const std::vector<PartyMember> &BattleMode::getCurrentPartyMembers() const
 {

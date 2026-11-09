@@ -3,9 +3,15 @@
 
 CombatAction BattleMapper::mapToCombatAction(const CombatActionRequest &request)
 {
-	// TODO: change from nullptr to real actor
-	// change from empty vector to real targets (via CombatantId)
-	return CombatAction{nullptr, request.actionType, std::vector<Combatable *>()};
+	// map ID to actor
+	// Combatable* actor = request.actorId;
+
+	std::vector<Combatable *> targets;
+	for (const auto &target : request.targetIds) {
+		// fetch target by id
+	}
+
+	return CombatAction{nullptr, request.actionType, std::move(targets)};
 }
 
 CombatantInfo BattleMapper::mapToCombatantInfo(const PartyMember &partyMember)
