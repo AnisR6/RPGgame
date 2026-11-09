@@ -15,7 +15,8 @@ struct BattleInfoResponse {
 };
 
 struct CombatActionRequest {
-	std::vector<int> targets;
+	int actorId;
+	std::vector<int> targetIds;
 	ActionType actionType = ActionType::BASE_ATTACK;
 	int actionId = -1;
 };
