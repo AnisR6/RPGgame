@@ -1,13 +1,42 @@
----
+
 BasedOnStyle: LLVM
-ColumnLimit: 120
+
+# General
 IndentWidth: 4
 TabWidth: 4
-UseTab: ForIndentation
-AlignEscapedNewlines: DontAlign
+UseTab: Never
+ColumnLimit: 100
+
+# Braces
+BreakBeforeBraces: Attach
+NamespaceIndentation: All
+IndentAccessModifiers: true
+
+# Classes
+AccessModifierOffset: 0
+EmptyLineBeforeAccessModifier: Always
+
+# Functions
 AllowShortFunctionsOnASingleLine: Inline
-AlwaysBreakTemplateDeclarations: true
-BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeBraces: Custom
-BraceWrapping:
-  AfterFunction: true
+AllowShortLambdasOnASingleLine: All
+
+# Constructors
+BreakConstructorInitializers: BeforeColon
+PackConstructorInitializers: Never
+
+# Formatting
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+
+# Empty lines
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# Includes
+SortIncludes: Never
+
+# C++ standard
+Standard: c++20
