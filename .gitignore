@@ -372,3 +372,6 @@ compile_commands.json
 .idea/
 .DS_Store
 **/.DS_Store
+
+# Local formatting config
+.clang-format
