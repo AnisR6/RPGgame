@@ -1,5 +1,8 @@
 #include "BattleMapper.hpp"
 
+#include <algorithm>
+#include <iterator>
+
 CombatAction BattleMapper::mapToCombatAction(const CombatActionRequest &request)
 {
 	// TODO: change from nullptr to real actor
