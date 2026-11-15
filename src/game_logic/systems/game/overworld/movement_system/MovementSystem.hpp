@@ -5,7 +5,7 @@
 #include "game_state/ecs/components/CollisionComponent.hpp"
 #include "game_state/ecs/components/MovementComponent.hpp"
 #include "game_state/ecs/components/PositionComponent.hpp"
-#include "game_state/world/TileMap.hpp"
+#include "game_state/overworld/TileMap.hpp"
 
 // Moves entities, IT reads where they want to go, and moves them unless a wall is in the way
 class MovementSystem {

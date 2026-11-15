@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "game_state/ecs/prefabs/characters/player/Player.hpp"
-#include "game_state/world/TileMap.hpp"
+#include "game_state/overworld/TileMap.hpp"
 
 // The overworld: the map and the player walking on it
 class OverworldMode {
