@@ -1,6 +1,6 @@
 #pragma once
 
-struct Stats {
+struct StatsComponent {
 	int maxHP = 100;
 	int maxMP = 50;
 	int currHP = 100;

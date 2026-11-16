@@ -1,19 +1,23 @@
 #pragma once
 #include "application/bus/BattleMessageBus.hpp"
 #include "game_logic/mappers/BattleMapper.hpp"
-#include "game_logic/systems/game/battle/battle_system/BattleSystem.hpp"
+#include "game_state/ecs/world/World.hpp"
 
 class BattleMode {
   private:
-	BattleSystem battleSystem;
-	BattleMapper battleMapper;
 	BattleMessageBus &battleModeMessageBus;
+	Engine::ECS::World &world;
+	Engine::ECS::Entity activeBattleStateEntity;
 
-	[[nodiscard]] const std::vector<PartyMember> &getCurrentPartyMembers() const;
-	[[nodiscard]] const std::vector<Enemy> &getCurrentEnemies() const;
 	void handleBattleInitRequest() const;
 	void handleCombatActionRequest(const CombatActionRequest &combatActionRequest);
 
+	// To be removed; helper for hardcoding party members and enemies
+	void createParties(std::vector<Engine::ECS::Entity> &partyMembers, std::vector<Engine::ECS::Entity> &enemies) const;
+
+	void startBattle();
+	void endBattle() const;
+
   public:
-	explicit BattleMode(BattleMessageBus &messageBus);
+	explicit BattleMode(BattleMessageBus &messageBus, Engine::ECS::World &world);
 };

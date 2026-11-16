@@ -1,12 +1,14 @@
 #pragma once
-#include "game_logic/systems/game/battle/battle_system/Structure/CombatSkill.hpp"
-#include "game_logic/systems/game/battle/battle_system/Structure/Spell.hpp"
+
+#include "game_state/ecs/entity/Entity.hpp"
+#include "game_state/ecs/system/combat/Structure/CombatSkill.hpp"
+#include "game_state/ecs/system/combat/Structure/Spell.hpp"
 
 #include <string>
 #include <vector>
 
 struct CombatantInfo {
-	int id;
+	Engine::ECS::Entity entity;
 	std::string name;
 	int currHP;
 	int maxHP;

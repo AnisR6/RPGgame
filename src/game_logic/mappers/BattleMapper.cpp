@@ -1,4 +1,10 @@
 #include "BattleMapper.hpp"
+
+#include "game_state/ecs/components/CombatSkillComponent.hpp"
+#include "game_state/ecs/components/NameComponent.hpp"
+#include "game_state/ecs/components/SpellComponent.hpp"
+#include "game_state/ecs/components/combat/StatsComponent.hpp"
+
 #include <iterator>
 
 #include <algorithm>
@@ -6,46 +12,42 @@
 
 CombatAction BattleMapper::mapToCombatAction(const CombatActionRequest &request)
 {
-	// map ID to actor
-	// Combatable* actor = request.actorId;
+	return CombatAction{request.actorEntity, request.actionType, request.targetEntities};
+}
 
-	std::vector<Combatable *> targets;
-	for (const auto &target : request.targetIds) {
-		// fetch target by id
+CombatantInfo BattleMapper::mapToCombatantInfo(const Engine::ECS::Entity entity) const
+{
+	const auto &[name] = world.GetComponent<NameComponent>(entity);
+	const StatsComponent &stats = world.GetComponent<StatsComponent>(entity);
+	const SpellComponent &spells = world.GetComponent<SpellComponent>(entity);
+	const CombatSkillComponent &skills = world.GetComponent<CombatSkillComponent>(entity);
+
+	// TODO: Map to objects
+	/*
+	for (auto spellId : spells.spellIds) {
+
 	}
 
-	return CombatAction{nullptr, request.actionType, std::move(targets)};
-}
+	for (auto skillId : skills.skillIds) {
 
-CombatantInfo BattleMapper::mapToCombatantInfo(const PartyMember &partyMember)
-{
-	const Stats &stats = partyMember.getStats();
-	return CombatantInfo{.name = partyMember.getName(),
+	}
+	*/
+
+	return CombatantInfo{.name = name,
 	                     .currHP = stats.currHP,
 	                     .maxHP = stats.maxHP,
 	                     .currMP = stats.currMP,
 	                     .maxMP = stats.maxMP,
-	                     .spells = partyMember.getSpells(),
-	                     .skills = partyMember.getCombatSkills()};
+	                     .spells = {},
+	                     .skills = {}};
 }
 
-CombatantInfo BattleMapper::mapToCombatantInfo(const Enemy &enemy)
-{
-	const Stats &stats = enemy.getStats();
-	return CombatantInfo{.name = enemy.getName(),
-	                     .currHP = stats.currHP,
-	                     .maxHP = stats.maxHP,
-	                     .currMP = stats.currMP,
-	                     .maxMP = stats.maxMP,
-	                     .spells = enemy.getSpells(),
-	                     .skills = enemy.getCombatSkills()};
-}
-
-template <typename T>
-std::vector<CombatantInfo> BattleMapper::mapToCombatantInfos(const std::vector<T> &combatants)
+std::vector<CombatantInfo>
+BattleMapper::mapToCombatantInfos(const std::vector<Engine::ECS::Entity> &combatantEntities) const
 {
 	std::vector<CombatantInfo> result;
-	result.reserve(combatants.size());
-	std::ranges::transform(combatants, std::back_inserter(result), [](const T &c) { return mapToCombatantInfo(c); });
+	result.reserve(combatantEntities.size());
+	std::ranges::transform(combatantEntities, std::back_inserter(result),
+	                       [this](const Engine::ECS::Entity e) { return mapToCombatantInfo(e); });
 	return result;
 }

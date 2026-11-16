@@ -1,6 +1,6 @@
 #pragma once
-#include "application/battle/CombatantInfo.hpp"
-#include "game_logic/systems/game/battle/battle_system/Structure/CombatAction.hpp"
+#include "game_state/ecs/entity/Entity.hpp"
+#include "game_state/ecs/system/combat/Structure/CombatAction.hpp"
 
 #include <variant>
 
@@ -9,14 +9,14 @@
 struct BattleInfoRequest {};
 
 struct BattleInfoResponse {
-	std::vector<CombatantInfo> playerPartyInfo;
-	std::vector<CombatantInfo> enemyPartyInfo;
-	std::size_t currentPartyMemberIndex;
+	std::vector<Engine::ECS::Entity> playerPartyEntities;
+	std::vector<Engine::ECS::Entity> enemyPartyEntities;
+	std::size_t currentActorIndex;
 };
 
 struct CombatActionRequest {
-	int actorId;
-	std::vector<int> targetIds;
+	Engine::ECS::Entity actorEntity;
+	std::vector<Engine::ECS::Entity> targetEntities;
 	ActionType actionType = ActionType::BASE_ATTACK;
 	int actionId = -1;
 };
