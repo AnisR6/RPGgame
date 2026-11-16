@@ -6,9 +6,6 @@
 #include "presentation/widgets/menu/MenuContainer.hpp"
 #include "presentation/widgets/menu/MenuText.hpp"
 
-#include "game_logic/systems/game/battle/battle_system/Structure/CombatSkill.hpp"
-#include "game_logic/systems/game/battle/battle_system/Structure/Spell.hpp"
-
 BattleScreen &BattleScreen::getInstance()
 {
 	static BattleScreen instance;
@@ -36,35 +33,37 @@ BattleScreen::BattleScreen() : Screen(padding(24.f, menu(), {.background = sf::C
 
 std::unique_ptr<Widget> BattleScreen::createMainBattleMenu()
 {
-	return menu(
-	    column(children(text("Combat", 48, sf::Color::White),
-	                    // TODO: base attack target scope should depend on equipped weapon
-	                    button(onPressed([this] {
-		                           showTargetMenu(TargetScope::SINGLE_ENEMY, [this](std::vector<int> targetIds) {
-			                           callbacks.onBaseAttack(std::move(targetIds));
-		                           });
-	                           }),
-	                           text("Attack", 28, sf::Color::White)),
-	                    button(onPressed([this] { showSubMenu<Spell>(); }), text("Spell", 28, sf::Color::White)),
-	                    button(onPressed([this] { showSubMenu<CombatSkill>(); }), text("Skill", 28, sf::Color::White)),
-	                    button(onPressed([] {}), text("Inventory", 28, sf::Color::White)),
-	                    button(onPressed(callbacks.onFlight), text("Flight", 28, sf::Color::White)))));
+	return menu(column(children(
+	    text("Combat", 48, sf::Color::White),
+	    // TODO: base attack target scope should depend on equipped weapon
+	    button(onPressed([this] {
+		           showTargetMenu(TargetScope::SINGLE_ENEMY, [this](std::vector<Engine::ECS::Entity> targetIds) {
+			           callbacks.onBaseAttack(std::move(targetIds));
+		           });
+	           }),
+	           text("Attack", 28, sf::Color::White)),
+	    button(onPressed([this] { showSubMenu<Spell>(); }), text("Spell", 28, sf::Color::White)),
+	    button(onPressed([this] { showSubMenu<CombatSkill>(); }), text("Skill", 28, sf::Color::White)),
+	    button(onPressed([] {}), text("Inventory", 28, sf::Color::White)),
+	    button(onPressed(callbacks.onFlight), text("Flight", 28, sf::Color::White)))));
 }
 
-template <typename T, typename GetId, typename GetName, typename GetTargetScope>
-std::unique_ptr<Widget> BattleScreen::createSubMenu(const std::vector<T> &subMenuEntries,
-                                                    const std::function<void(std::vector<int>, int)> &onSelected,
-                                                    GetId getId, GetName getName, GetTargetScope getTargetScope)
+template <typename T, typename GetEntity, typename GetName, typename GetTargetScope>
+std::unique_ptr<Widget>
+BattleScreen::createSubMenu(const std::vector<T> &subMenuEntries,
+                            const std::function<void(std::vector<Engine::ECS::Entity>, int)> &onSelected,
+                            GetEntity getEntity, GetName getName, GetTargetScope getTargetScope)
 {
 	std::vector<std::unique_ptr<Widget>> buttons;
 
 	for (const auto &entry : subMenuEntries) {
-		buttons.push_back(button(onPressed([id = getId(entry), targetScope = getTargetScope(entry), onSelected, this] {
-			                         showTargetMenu(targetScope, [id, onSelected](std::vector<int> targets) {
-				                         onSelected(std::move(targets), id);
-			                         });
-		                         }),
-		                         text(getName(entry), 22, sf::Color::White)));
+		buttons.push_back(
+		    button(onPressed([entity = getEntity(entry), targetScope = getTargetScope(entry), onSelected, this] {
+			           showTargetMenu(targetScope, [entity, onSelected](std::vector<Engine::ECS::Entity> targets) {
+				           onSelected(std::move(targets), entity);
+			           });
+		           }),
+		           text(getName(entry), 22, sf::Color::White)));
 	}
 
 	buttons.push_back(button(onPressed([this] { showMain(); }), text("Back", 22, sf::Color::White)));
@@ -72,8 +71,9 @@ std::unique_ptr<Widget> BattleScreen::createSubMenu(const std::vector<T> &subMen
 	return menu(column(std::move(buttons)));
 }
 
-std::unique_ptr<Widget> BattleScreen::createTargetMenu(const TargetScope targetScope,
-                                                       const std::function<void(std::vector<int>)> &onTargetSelected)
+std::unique_ptr<Widget>
+BattleScreen::createTargetMenu(const TargetScope targetScope,
+                               const std::function<void(std::vector<Engine::ECS::Entity>)> &onTargetSelected)
 {
 	std::vector<std::unique_ptr<Widget>> buttons;
 	std::vector<CombatantInfo> possibleTargets;
@@ -83,11 +83,11 @@ std::unique_ptr<Widget> BattleScreen::createTargetMenu(const TargetScope targetS
 		possibleTargets = enemyPartyInfo;
 		break;
 	case TargetScope::ALL_ENEMIES: {
-		std::vector<int> enemyIds;
+		std::vector<Engine::ECS::Entity> enemyEntities;
 		for (const auto &enemy : enemyPartyInfo) {
-			enemyIds.push_back(enemy.id);
+			enemyEntities.push_back(enemy.entity);
 		}
-		buttons.push_back(button(onPressed([onTargetSelected, enemyIds] { onTargetSelected(enemyIds); }),
+		buttons.push_back(button(onPressed([onTargetSelected, enemyEntities] { onTargetSelected(enemyEntities); }),
 		                         text("All Enemies", 22, sf::Color::White)));
 		break;
 	}
@@ -95,25 +95,26 @@ std::unique_ptr<Widget> BattleScreen::createTargetMenu(const TargetScope targetS
 		possibleTargets = playerPartyInfo;
 		break;
 	case TargetScope::ALL_ALLIES: {
-		std::vector<int> partyIds;
+		std::vector<Engine::ECS::Entity> partyIds;
 		for (const auto &partyMember : playerPartyInfo) {
-			partyIds.push_back(partyMember.id);
+			partyIds.push_back(partyMember.entity);
 		}
 		buttons.push_back(button(onPressed([onTargetSelected, partyIds] { onTargetSelected(partyIds); }),
 		                         text("All Allies", 22, sf::Color::White)));
 		break;
 	}
 	case TargetScope::SELF: {
-		buttons.push_back(button(
-		    onPressed([onTargetSelected, this] { onTargetSelected({playerPartyInfo.at(currentPartyMemberIndex).id}); }),
-		    text("Self", 22, sf::Color::White)));
+		buttons.push_back(button(onPressed([onTargetSelected, this] {
+			                         onTargetSelected({playerPartyInfo.at(currentPartyMemberIndex).entity});
+		                         }),
+		                         text("Self", 22, sf::Color::White)));
 		break;
 	}
 	}
 
 	if (targetScope == TargetScope::SINGLE_ENEMY || targetScope == TargetScope::SINGLE_ALLIE) {
 		for (const auto &posTarget : possibleTargets) {
-			buttons.push_back(button(onPressed([onTargetSelected, posTarget] { onTargetSelected({posTarget.id}); }),
+			buttons.push_back(button(onPressed([onTargetSelected, posTarget] { onTargetSelected({posTarget.entity}); }),
 			                         text(posTarget.name, 22, sf::Color::White)));
 		}
 	}
@@ -147,7 +148,7 @@ void BattleScreen::showSubMenu()
 }
 
 void BattleScreen::showTargetMenu(const TargetScope targetScope,
-                                  const std::function<void(std::vector<int>)> &onTargetSelected)
+                                  const std::function<void(std::vector<Engine::ECS::Entity>)> &onTargetSelected)
 {
 	setRootWidget(createTargetMenu(targetScope, onTargetSelected));
 }

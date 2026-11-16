@@ -3,19 +3,22 @@
 #include <utility>
 
 #include "application/messages/BattleMessage.hpp"
+#include "game_state/ecs/components/combat/StatsComponent.hpp"
 #include "presentation/screens/battle_screen/BattleScreen.hpp"
 
-BattleController::BattleController(BattleMessageBus &messageBus) : battleMessageBus(messageBus)
+BattleController::BattleController(BattleMessageBus &messageBus, Engine::ECS::World &world)
+    : battleMessageBus(messageBus), world(world)
 {
 	messageBus.subscribe<BattleInfoResponse>(
 	    [this](const BattleInfoResponse &response) { updateBattleInfo(response); });
 }
 
+// TODO: adjust to entity based approach
 void BattleController::updateBattleInfo(const BattleInfoResponse &response)
 {
-	partyMembers = response.playerPartyInfo;
-	enemies = response.enemyPartyInfo;
-	currentPartyMemberIndex = response.currentPartyMemberIndex;
+	// Extract Data of the entities that will be displayed in the screen
+	partyMembers = response.playerPartyEntities;
+	enemies = response.enemyPartyEntities;
 
 	setBattleInfoForBattleScreen();
 }
@@ -28,43 +31,46 @@ void BattleController::initBattle()
 
 void BattleController::setBattleInfoForBattleScreen() const
 {
-	BattleScreen::getInstance().setBattleInfo(partyMembers, enemies, currentPartyMemberIndex);
+	// TODO: change this, not working with ecs
+	// BattleScreen::getInstance().setBattleInfo(partyMembers, enemies, currentPartyMemberIndex);
 }
 
 void BattleController::setCallbacksForBattleScreen()
 {
-	auto actor = partyMembers.at(currentPartyMemberIndex);
+	auto actor = partyMembers.at(currentActorIndex);
 
-	callbacks.onBaseAttack = [this, actor](std::vector<int> targetIds) {
-		CombatActionRequest baseAttackRequest{.actorId = actor.id,
-		                                      .targetIds = std::move(targetIds),
+	callbacks.onBaseAttack = [this, actor](std::vector<Engine::ECS::Entity> targetIds) {
+		CombatActionRequest baseAttackRequest{.actorEntity = actor,
+		                                      .targetEntities = std::move(targetIds),
 		                                      .actionType = ActionType::BASE_ATTACK,
 		                                      .actionId = -1};
 
 		battleMessageBus.publish(baseAttackRequest);
 	};
 
-	callbacks.onSpell = [this, actor](std::vector<int> targetIds, const int spellId) {
-		CombatActionRequest spellRequest{
-		    .actorId = actor.id, .targetIds = std::move(targetIds), .actionType = ActionType::SPELL, .actionId = spellId
+	callbacks.onSpell = [this, actor](std::vector<Engine::ECS::Entity> targetIds, const int spellId) {
+		CombatActionRequest spellRequest{.actorEntity = actor,
+		                                 .targetEntities = std::move(targetIds),
+		                                 .actionType = ActionType::SPELL,
+		                                 .actionId = spellId
 
 		};
 
 		battleMessageBus.publish(spellRequest);
 	};
 
-	callbacks.onSkill = [this, actor](std::vector<int> targetIds, const int skilLId) {
-		CombatActionRequest skillRequest{.actorId = actor.id,
-		                                 .targetIds = std::move(targetIds),
+	callbacks.onSkill = [this, actor](std::vector<Engine::ECS::Entity> targetIds, const int skilLId) {
+		CombatActionRequest skillRequest{.actorEntity = actor,
+		                                 .targetEntities = std::move(targetIds),
 		                                 .actionType = ActionType::SKILL,
 		                                 .actionId = skilLId};
 
 		battleMessageBus.publish(skillRequest);
 	};
 
-	callbacks.onInventory = [this, actor](std::vector<int> targetIs, const int itemId) {
-		CombatActionRequest inventoryRequest{.actorId = actor.id,
-		                                     .targetIds = std::move(targetIs),
+	callbacks.onInventory = [this, actor](std::vector<Engine::ECS::Entity> targetIs, const int itemId) {
+		CombatActionRequest inventoryRequest{.actorEntity = actor,
+		                                     .targetEntities = std::move(targetIs),
 		                                     .actionType = ActionType::INVENTORY,
 		                                     .actionId = itemId};
 

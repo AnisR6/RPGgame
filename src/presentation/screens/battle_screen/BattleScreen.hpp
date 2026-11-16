@@ -1,6 +1,7 @@
 #pragma once
 #include "application/battle/CombatantInfo.hpp"
 #include "application/callbacks/BattleMenuCallbacks.hpp"
+#include "game_state/ecs/system/combat/Structure/TargetScope.hpp"
 #include "presentation/screens/core/Screen.hpp"
 
 class BattleScreen : public Screen {
@@ -16,15 +17,17 @@ class BattleScreen : public Screen {
 
 	template <typename T, typename GetId, typename GetName, typename GetTargetScope>
 	std::unique_ptr<Widget> createSubMenu(const std::vector<T> &subMenuEntries,
-	                                      const std::function<void(std::vector<int>, int)> &onSelected, GetId getId,
-	                                      GetName getName, GetTargetScope getTargetScope);
+	                                      const std::function<void(std::vector<Engine::ECS::Entity>, int)> &onSelected,
+	                                      GetId getId, GetName getName, GetTargetScope getTargetScope);
 
-	std::unique_ptr<Widget> createTargetMenu(TargetScope targetScope,
-	                                         const std::function<void(std::vector<int>)> &onTargetSelected);
+	std::unique_ptr<Widget>
+	createTargetMenu(TargetScope targetScope,
+	                 const std::function<void(std::vector<Engine::ECS::Entity>)> &onTargetSelected);
 	void showMain();
 	template <typename T>
 	void showSubMenu();
-	void showTargetMenu(TargetScope targetScope, const std::function<void(std::vector<int>)> &onTargetSelected);
+	void showTargetMenu(TargetScope targetScope,
+	                    const std::function<void(std::vector<Engine::ECS::Entity>)> &onTargetSelected);
 
   public:
 	static BattleScreen &getInstance();

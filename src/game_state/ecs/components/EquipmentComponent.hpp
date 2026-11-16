@@ -1,6 +1,6 @@
 #pragma once
 
-struct Equipment {
+struct EquipmentComponent {
 	unsigned head;
 	unsigned body;
 	unsigned boots;

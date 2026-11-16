@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Player::Player(sf::Vector2f startPosition, const std::string& spriteSheetPath) {
+Prefabs::Player::Player(sf::Vector2f startPosition, const std::string& spriteSheetPath) {
     position.position = startPosition;
 
     if (!sprite.spriteSheet.loadFromFile(spriteSheetPath)) {
