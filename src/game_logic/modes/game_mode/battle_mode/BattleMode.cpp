@@ -3,21 +3,42 @@
 #include "game_state/ecs/prefabs/characters/enemy/Enemy.hpp"
 #include "game_state/ecs/prefabs/characters/party_member/PartyMember.hpp"
 #include "game_state/ecs/prefabs/characters/player/Player.hpp"
-#include "game_state/ecs/prefabs/combat/BattleState.hpp"
+#include "game_state/ecs/system/combat/enemy_ai_system/EnemyAISystem.hpp"
+#include "game_state/ecs/system/combat/turn_execution_system/TurnExecutionSystem.hpp"
 
-#include <iostream>
+#include <utility>
 
-BattleMode::BattleMode(BattleMessageBus &messageBus, Engine::ECS::World &world)
-    : battleModeMessageBus(messageBus), world(world)
+namespace Engine::ECS {
+BattleMode::BattleMode(BattleMessageBus &messageBus, World &world, BattleState battleState,
+                       const CombatActionExecutor executor)
+    : battleModeMessageBus(messageBus), world(world), battleState(std::move(battleState)), executor(executor)
 {
-	messageBus.subscribe<BattleInfoRequest>([this](const BattleInfoRequest &request) { handleBattleInitRequest(); });
+	// subscribe to relevant Requests
+	subscribeToEvents();
+	// Register Systems via SystemManager
+	registerSystems();
+}
 
-	messageBus.subscribe<CombatActionRequest>(
+void BattleMode::subscribeToEvents()
+{
+	battleModeMessageBus.subscribe<BattleInfoRequest>(
+	    [this](const BattleInfoRequest &request) { handleBattleInitRequest(); });
+	battleModeMessageBus.subscribe<CombatActionRequest>(
 	    [this](const CombatActionRequest &request) { handleCombatActionRequest(request); });
 }
 
-void BattleMode::createParties(std::vector<Engine::ECS::Entity> &partyMembers,
-                               std::vector<Engine::ECS::Entity> &enemies) const
+void BattleMode::registerSystems()
+{
+	systemManager.RegisterSystem<EnemyAISystem>(battleState);
+	systemManager.RegisterSystem<TurnExecutionSystem>(battleState, executor);
+}
+
+void BattleMode::Update(const float deltaTime)
+{
+	world.UpdateSystems(systemManager, deltaTime);
+}
+
+void BattleMode::createParties(std::vector<Entity> &partyMembers, std::vector<Entity> &enemies) const
 {
 	StatsComponent defaultStats{.maxHP = 100,
 	                            .maxMP = 100,
@@ -30,24 +51,22 @@ void BattleMode::createParties(std::vector<Engine::ECS::Entity> &partyMembers,
 	                            .skill = 100,
 	                            .speed = 100};
 
-	Prefabs::PlayerBlueprint playerBlueprint{"John Doe", {}, {}, {}, {}, {}, defaultStats, {}, {}};
-
-	// creating player
-	Prefabs::createPlayer(world, std::move(playerBlueprint));
+	Prefabs::PlayerBlueprint playerBlueprint{"John Doe", {}, {}, {}, {}, {}, defaultStats, {}};
 
 	// creating party members
-	Prefabs::PartyMemberBlueprint partyMember1{"Foo", {}, defaultStats, {}, {}, {}};
-	Prefabs::PartyMemberBlueprint partyMember2{"Bar", {}, defaultStats, {}, {}, {}};
-	Prefabs::PartyMemberBlueprint partyMember3{"Baz", {}, defaultStats, {}, {}, {}};
+	Prefabs::PartyMemberBlueprint partyMember1{"Foo", {}, {}, {}};
+	Prefabs::PartyMemberBlueprint partyMember2{"Bar", {}, defaultStats, {}};
+	Prefabs::PartyMemberBlueprint partyMember3{"Baz", {}, defaultStats, {}};
 
-	partyMembers = {Prefabs::createPartyMember(world, std::move(partyMember1)),
+	partyMembers = {Prefabs::createPlayer(world, std::move(playerBlueprint)),
+	                Prefabs::createPartyMember(world, std::move(partyMember1)),
 	                Prefabs::createPartyMember(world, std::move(partyMember2)),
 	                Prefabs::createPartyMember(world, std::move(partyMember3))};
 
 	// creating enemies
-	Prefabs::EnemyBlueprint enemy1{"Slime", {}, defaultStats, {}, {}, {}, {}};
-	Prefabs::EnemyBlueprint enemy2{"Spider", {}, defaultStats, {}, {}, {}, {}};
-	Prefabs::EnemyBlueprint enemy3{"Goblin", {}, defaultStats, {}, {}, {}, {}};
+	Prefabs::EnemyBlueprint enemy1{"Slime", {}, defaultStats, {}, {}, {}};
+	Prefabs::EnemyBlueprint enemy2{"Spider", {}, defaultStats, {}, {}, {}};
+	Prefabs::EnemyBlueprint enemy3{"Goblin", {}, defaultStats, {}, {}, {}};
 
 	enemies = {Prefabs::createEnemy(world, std::move(enemy1)), Prefabs::createEnemy(world, std::move(enemy2)),
 	           Prefabs::createEnemy(world, std::move(enemy3))};
@@ -55,63 +74,31 @@ void BattleMode::createParties(std::vector<Engine::ECS::Entity> &partyMembers,
 
 void BattleMode::startBattle()
 {
-	// start in player turn
-	constexpr BattlePhaseComponent battlePhaseComponent{BattlePhase::PlayerTurn};
-
-	// party members and enemies hardcoded
-	std::vector<Engine::ECS::Entity> partyMembers;
-	std::vector<Engine::ECS::Entity> enemies;
+	// party members and enemies hardcoded => should be received from the outside
+	std::vector<Entity> partyMembers;
+	std::vector<Entity> enemies;
 	createParties(partyMembers, enemies);
 
-	TurnOrderComponent turnOrderComponent{.playerPartyEntities = std::move(partyMembers),
-	                                      .enemyEntities = std::move(enemies)};
-
-	RoundActionsComponent roundActionsComponent;
-
-	Prefabs::BattleStateBlueprint blueprint{.battlePhaseComponent = battlePhaseComponent,
-	                                        .turnOrderComponent = std::move(turnOrderComponent),
-	                                        .roundActionsComponent = std::move(roundActionsComponent)};
-
-	activeBattleStateEntity = Prefabs::createBattleState(world, std::move(blueprint));
+	battleState = {
+	    .battlePhaseState = {BattlePhase::PlayerTurn},
+	    .turnOrderState = {.playerPartyEntities = std::move(partyMembers), .enemyEntities = std::move(enemies)},
+	    .roundActionsState = {}};
 }
 
-void BattleMode::endBattle() const
-{
-	if (world.DestroyEntity(activeBattleStateEntity)) {
-		std::cout << "Successfully destroyed battleStateEntity" << std::endl;
-	} else {
-		std::cout << "Error: battleStateEntity was not destroyed" << std::endl;
-	}
-}
+void BattleMode::endBattle() const {}
 
-// TODO: migrate request handling
-/*
 void BattleMode::handleBattleInitRequest() const
 {
-    const auto playerPartyInfo = BattleMapper::mapToCombatantInfos(getCurrentPartyMembers());
-    const auto enemyPartyInfo = BattleMapper::mapToCombatantInfos(getCurrentEnemies());
-    BattleInfoResponse response{.playerPartyEntities = playerPartyInfo, .enemyPartyInfo = enemyPartyInfo};
-    battleModeMessageBus.publish(response);
+	const auto playerPartyEntities = battleState.turnOrderState.playerPartyEntities;
+	const auto enemyPartyEntities = battleState.turnOrderState.enemyEntities;
+	BattleInfoResponse response{.playerPartyEntities = playerPartyEntities, .enemyPartyEntities = enemyPartyEntities};
+	battleModeMessageBus.publish(response);
 }
 
 void BattleMode::handleCombatActionRequest(const CombatActionRequest &combatActionRequest)
 {
-    // This way the phase can be accessed and changed
-    auto &[currentPhase] = world.GetComponent<Engine::ECS::BattlePhaseComponent>(activeBattleStateEntity);
-    currentPhase = Engine::ECS::BattlePhase::PlayerTurn;
-
-    // map to CombatAction
-    const CombatAction action = BattleMapper::mapToCombatAction(combatActionRequest);
-    battleSystem.handlePlayerInputForCurrentPartyMember(action);
+	const CombatAction action = BattleMapper::mapToCombatAction(combatActionRequest);
+	battleState.roundActionsState.roundActions.push_back(action);
 }
 
-const std::vector<PartyMember> &BattleMode::getCurrentPartyMembers() const
-{
-    return battleSystem.getPartyMembers();
-}
-
-const std::vector<Enemy> &BattleMode::getCurrentEnemies() const
-{
-    return battleSystem.getEnemies();
-}
-*/
+} // namespace Engine::ECS

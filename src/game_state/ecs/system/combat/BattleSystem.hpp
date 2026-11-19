@@ -1,5 +1,4 @@
 #pragma once
-#include "Structure/CombatAction.hpp"
 #include "game_state/ecs/system/ISystem.hpp"
 
 namespace Engine::ECS {

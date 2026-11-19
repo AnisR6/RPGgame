@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "application/messages/BattleMessage.hpp"
+#include "game_state/ecs/components/NameComponent.hpp"
 #include "game_state/ecs/components/combat/StatsComponent.hpp"
 #include "presentation/screens/battle_screen/BattleScreen.hpp"
 
@@ -11,6 +12,13 @@ BattleController::BattleController(BattleMessageBus &messageBus, Engine::ECS::Wo
 {
 	messageBus.subscribe<BattleInfoResponse>(
 	    [this](const BattleInfoResponse &response) { updateBattleInfo(response); });
+
+	messageBus.subscribe<ShowBattleDialogRequest>(
+	    [this](const ShowBattleDialogRequest &request) { showBattleDialog(request); });
+
+	messageBus.subscribe<PlayBattleAnimationRequest>(
+	    [this](const PlayBattleAnimationRequest &request) { playBattleAnimation(request); });
+	;
 }
 
 // TODO: adjust to entity based approach
@@ -21,12 +29,34 @@ void BattleController::updateBattleInfo(const BattleInfoResponse &response)
 	enemies = response.enemyPartyEntities;
 
 	setBattleInfoForBattleScreen();
+	setCallbacksForBattleScreen();
 }
 
-void BattleController::initBattle()
+// fetching initial battle data
+void BattleController::initBattle() const
 {
-	setCallbacksForBattleScreen();
 	battleMessageBus.publish(BattleInfoRequest{});
+}
+
+// create entries for UI
+BattleActionMenuEntry BattleController::createActionEntry(const Engine::ECS::Entity actionEntity) const
+{
+	auto [name] = world.GetComponent<NameComponent>(actionEntity);
+	auto [targetScope] = world.GetComponent<TargetScopeComponent>(actionEntity);
+	return {.entity = actionEntity, .name = name, .targetScope = targetScope};
+}
+
+CombatantMenuEntry BattleController::createTargetEntry(const Engine::ECS::Entity targetEntity)
+{
+	auto [name] = world.GetComponent<NameComponent>(targetEntity);
+	return {.entity = targetEntity, .name = name};
+}
+
+void BattleController::showBattleDialog(const ShowBattleDialogRequest &request) {}
+
+void BattleController::playBattleAnimation(const PlayBattleAnimationRequest &request)
+{
+	// Animations implemented later
 }
 
 void BattleController::setBattleInfoForBattleScreen() const
@@ -37,50 +67,12 @@ void BattleController::setBattleInfoForBattleScreen() const
 
 void BattleController::setCallbacksForBattleScreen()
 {
-	auto actor = partyMembers.at(currentActorIndex);
+	callbacks.onActionSelected = [this](std::vector<Engine::ECS::Entity> targetEntities,
+	                                    const Engine::ECS::Entity actionEntity) {
+		const auto actor = partyMembers.at(currentActorIndex);
 
-	callbacks.onBaseAttack = [this, actor](std::vector<Engine::ECS::Entity> targetIds) {
-		CombatActionRequest baseAttackRequest{.actorEntity = actor,
-		                                      .targetEntities = std::move(targetIds),
-		                                      .actionType = ActionType::BASE_ATTACK,
-		                                      .actionId = -1};
-
-		battleMessageBus.publish(baseAttackRequest);
-	};
-
-	callbacks.onSpell = [this, actor](std::vector<Engine::ECS::Entity> targetIds, const int spellId) {
-		CombatActionRequest spellRequest{.actorEntity = actor,
-		                                 .targetEntities = std::move(targetIds),
-		                                 .actionType = ActionType::SPELL,
-		                                 .actionId = spellId
-
-		};
-
-		battleMessageBus.publish(spellRequest);
-	};
-
-	callbacks.onSkill = [this, actor](std::vector<Engine::ECS::Entity> targetIds, const int skilLId) {
-		CombatActionRequest skillRequest{.actorEntity = actor,
-		                                 .targetEntities = std::move(targetIds),
-		                                 .actionType = ActionType::SKILL,
-		                                 .actionId = skilLId};
-
-		battleMessageBus.publish(skillRequest);
-	};
-
-	callbacks.onInventory = [this, actor](std::vector<Engine::ECS::Entity> targetIs, const int itemId) {
-		CombatActionRequest inventoryRequest{.actorEntity = actor,
-		                                     .targetEntities = std::move(targetIs),
-		                                     .actionType = ActionType::INVENTORY,
-		                                     .actionId = itemId};
-
-		battleMessageBus.publish(inventoryRequest);
-	};
-
-	callbacks.onFlight = [this]() {
-		CombatActionRequest flightRequest{};
-
-		battleMessageBus.publish(flightRequest);
+		battleMessageBus.publish(CombatActionRequest{
+		    .actorEntity = actor, .targetEntities = std::move(targetEntities), .actionEntity = actionEntity});
 	};
 
 	BattleScreen::getInstance().setCallbacks(std::move(callbacks));
