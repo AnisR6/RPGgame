@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
 
-#include "game_logic/modes/game_mode/overworld_mode/OverworldMode.hpp"
 #include "presentation/rendering/FontManager.hpp"
 #include "presentation/rendering/Renderer.hpp"
 #include "presentation/screens/boot_screen/MainMenuScreen.hpp"
 #include "presentation/screens/core/Screen.hpp"
+#include "presentation/screens/overworld_screen/OverworldScreen.hpp"
 
 #include <optional>
 
@@ -28,7 +28,7 @@ int main()
 	Renderer renderer(fonts);
 	Screen &activeScreen = MainMenuScreen::getInstance();
 
-	OverworldMode overworldMode;
+	OverworldScreen overworldScreen;
 	sf::Clock frameClock;
 
 	while (window.isOpen()) {
@@ -39,10 +39,10 @@ int main()
 		}
 		if (debugStartInOverworld) {
 			const float secondsSinceLastFrame = frameClock.restart().asSeconds();
-			overworldMode.update(secondsSinceLastFrame);
+			overworldScreen.update(secondsSinceLastFrame);
 
 			window.clear();
-			overworldMode.render(window);
+			overworldScreen.render(window);
 			window.display();
 		} else {
 			renderer.render(window, activeScreen);

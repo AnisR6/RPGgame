@@ -2,9 +2,10 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
-// The sprite sheet and which of its frames is shown right now
+// The sprite sheet and which of its frames is shown right now.
+// The texture is owned by AssetManager. This component only points at it.
 struct SpriteComponent {
-	sf::Texture spriteSheet;
+	const sf::Texture *spriteSheet = nullptr;
 	int frameWidthInPixels = 32;
 	int frameHeightInPixels = 48;
 	int framesPerRow = 4;

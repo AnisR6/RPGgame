@@ -3,6 +3,7 @@
 
 #include "game_state/ecs/entity/Entity.hpp"
 #include "game_state/ecs/entity/EntityManager.hpp"
+#include "game_state/ecs/query/Query.hpp"
 #include "game_state/ecs/storage/ComponentRegistry.hpp"
 #include "game_state/ecs/system/SystemManager.hpp"
 
@@ -70,6 +71,16 @@ namespace Engine::ECS {
             template <typename T>
             [[nodiscard]]
             bool RemoveComponent(Entity entity);
+
+            // ------------------------------------------------------------
+            // Query Creation
+            // ------------------------------------------------------------
+
+            template <typename IncludeSet, typename ExcludeSet = Excluding<>>
+            [[nodiscard]]
+            Query<IncludeSet, ExcludeSet> CreateQuery() {
+                return Query<IncludeSet, ExcludeSet>(entityManager, componentRegistry);
+            }
 
             // ------------------------------------------------------------
             // System Management
