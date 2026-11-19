@@ -1,19 +1,45 @@
 #pragma once
 #include "../combat_action/combat_action_executor/CombatActionExecutor.hpp"
+#include "BattleOutcomeEvaluator.hpp"
+#include "application/bus/BattleMessageBus.hpp"
 #include "game_state/ecs/system/ISystem.hpp"
+#include "game_state/ecs/system/combat/battle_state/BattleState.hpp"
 
 #include <algorithm>
 
 namespace Engine::ECS {
+
+enum class ExecutionState { Idle, ShowDialog, ExecuteAction, PlayAnimation, CheckBattleOutcome };
+
 class TurnExecutionSystem : public ISystem {
   private:
 	BattleState &battleState;
-	CombatActionExecutor executor;
+	BattleMessageBus &battleMessageBus;
+	CombatActionExecutor &executor;
+	ExecutionState executionState = ExecutionState::Idle;
+	bool dialogFinished = false;
+	bool animationFinished = false;
+	std::size_t currentActionIndex = 0;
+
+	void startDialog(const CombatAction &action);
+	void startAnimation(const CombatAction &action);
+	void finishTurn();
+	void finishBattle(BattleOutcome outcome);
 
   public:
-	TurnExecutionSystem(BattleState &battleState, const CombatActionExecutor executor)
-	    : battleState(battleState), executor(executor)
+	TurnExecutionSystem(BattleState &battleState, BattleMessageBus &messageBus, CombatActionExecutor &executor)
+	    : battleState(battleState), battleMessageBus(messageBus), executor(executor)
 	{
+		battleMessageBus.subscribe<ShowBattleDialogFinished>([this](const ShowBattleDialogFinished &) {
+			if (executionState == ExecutionState::ShowDialog) {
+				dialogFinished = true;
+			}
+		});
+		battleMessageBus.subscribe<PlayBattleAnimationFinished>([this](const PlayBattleAnimationFinished &) {
+			if (executionState == ExecutionState::PlayAnimation) {
+				animationFinished = true;
+			}
+		});
 	}
 
 	void Update(SystemContext &context, float deltaTime) override
@@ -22,33 +48,66 @@ class TurnExecutionSystem : public ISystem {
 			return;
 		}
 
-		// sort actions by speed
-		std::ranges::sort(battleState.roundActionsState.roundActions,
-		                  [&context](const CombatAction &a, const CombatAction &b) {
-			                  const auto &statsA = context.GetComponent<StatsComponent>(a.actorEntity);
-			                  const auto &statsB = context.GetComponent<StatsComponent>(b.actorEntity);
-			                  return statsA.speed > statsB.speed;
-		                  });
+		auto &actions = battleState.roundActionsState.roundActions;
+		switch (executionState) {
+		case ExecutionState::Idle: {
+			std::ranges::stable_sort(actions, [&context](const CombatAction &a, const CombatAction &b) {
+				const auto &statsA = context.GetComponent<StatsComponent>(a.actorEntity);
+				const auto &statsB = context.GetComponent<StatsComponent>(b.actorEntity);
+				return statsA.speed > statsB.speed;
+			});
+			currentActionIndex = 0;
 
-		for (const auto &action : battleState.roundActionsState.roundActions) {
+			if (actions.empty()) {
+				finishTurn();
+				return;
+			}
+
+			startDialog(actions.at(currentActionIndex));
+			return;
+		}
+		case ExecutionState::ShowDialog: {
+			if (!dialogFinished) {
+				return;
+			}
+
+			dialogFinished = false;
+			executionState = ExecutionState::ExecuteAction;
+			return;
+		}
+		case ExecutionState::ExecuteAction: {
+			const auto &action = actions.at(currentActionIndex);
+
 			executor.execute(action);
-
-			// publish changes via bus to trigger text box
-
-			// wait till finished / response received
-
-			// publish changes via bus to trigger animations
-
-			// wait till finished / repsonse received
-
-			// go to next combat action
+			startAnimation(action);
+			return;
 		}
 
-		// clear round actions at the end of the turn
-		battleState.roundActionsState.roundActions.clear();
+		case ExecutionState::PlayAnimation: {
+			if (!animationFinished) {
+				return;
+			}
 
-		// transition back to input event handling / maybe not like this
-		battleState.battlePhaseState.currentPhase = BattlePhase::PlayerTurn;
+			animationFinished = false;
+			executionState = ExecutionState::CheckBattleOutcome;
+			return;
+		}
+		case ExecutionState::CheckBattleOutcome: {
+			const auto outcome = BattleOutcomeEvaluator::evaluate(context, battleState);
+			if (outcome != BattleOutcome::Ongoing) {
+				finishBattle(outcome);
+				return;
+			}
+
+			++currentActionIndex;
+			if (currentActionIndex >= actions.size()) {
+				finishTurn();
+				return;
+			}
+			startDialog(actions[currentActionIndex]);
+			return;
+		}
+		}
 	}
 };
 } // namespace Engine::ECS

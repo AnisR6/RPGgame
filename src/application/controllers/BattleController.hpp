@@ -17,13 +17,14 @@ class BattleController {
 
 	void setCallbacksForBattleScreen();
 	void setBattleInfoForBattleScreen() const;
+	void setBattleActorMenuDataForBattleScreen() const;
 	void updateBattleInfo(const BattleInfoResponse &response);
 
 	BattleActionMenuEntry createActionEntry(Engine::ECS::Entity actionEntity) const;
-	CombatantMenuEntry createTargetEntry(Engine::ECS::Entity targetEntity);
+	CombatantMenuEntry createTargetEntry(Engine::ECS::Entity targetEntity) const;
 
-	void showBattleDialog(const ShowBattleDialogRequest &request);
-	void playBattleAnimation(const PlayBattleAnimationRequest &request);
+	void showBattleDialog(const ShowBattleDialogRequest &request) const;
+	void playBattleAnimation(const PlayBattleAnimationRequest &request) const;
 
   public:
 	explicit BattleController(BattleMessageBus &messageBus, Engine::ECS::World &world);

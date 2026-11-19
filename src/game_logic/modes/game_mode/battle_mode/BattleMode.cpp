@@ -30,7 +30,7 @@ void BattleMode::subscribeToEvents()
 void BattleMode::registerSystems()
 {
 	systemManager.RegisterSystem<EnemyAISystem>(battleState);
-	systemManager.RegisterSystem<TurnExecutionSystem>(battleState, executor);
+	systemManager.RegisterSystem<TurnExecutionSystem>(battleState, battleModeMessageBus, executor);
 }
 
 void BattleMode::Update(const float deltaTime)
@@ -91,7 +91,10 @@ void BattleMode::handleBattleInitRequest() const
 {
 	const auto playerPartyEntities = battleState.turnOrderState.playerPartyEntities;
 	const auto enemyPartyEntities = battleState.turnOrderState.enemyEntities;
-	BattleInfoResponse response{.playerPartyEntities = playerPartyEntities, .enemyPartyEntities = enemyPartyEntities};
+	const auto currentActorIndex = battleState.turnOrderState.currentActorIndex;
+	BattleInfoResponse response{.playerPartyEntities = playerPartyEntities,
+	                            .enemyPartyEntities = enemyPartyEntities,
+	                            .currentActorIndex = currentActorIndex};
 	battleModeMessageBus.publish(response);
 }
 
