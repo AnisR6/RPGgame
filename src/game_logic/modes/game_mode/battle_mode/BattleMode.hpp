@@ -1,23 +1,32 @@
 #pragma once
 #include "application/bus/BattleMessageBus.hpp"
 #include "game_logic/mappers/BattleMapper.hpp"
+#include "game_state/ecs/system/combat/battle_state/BattleState.hpp"
+#include "game_state/ecs/system/combat/combat_action/combat_action_executor/CombatActionExecutor.hpp"
 #include "game_state/ecs/world/World.hpp"
 
+namespace Engine::ECS {
 class BattleMode {
   private:
 	BattleMessageBus &battleModeMessageBus;
-	Engine::ECS::World &world;
-	Engine::ECS::Entity activeBattleStateEntity;
+	World &world;
+	SystemManager systemManager;
+	BattleState battleState;
+	CombatActionExecutor executor;
+
+	void subscribeToEvents();
+	void registerSystems();
+	void Update(float deltaTime);
 
 	void handleBattleInitRequest() const;
 	void handleCombatActionRequest(const CombatActionRequest &combatActionRequest);
 
 	// To be removed; helper for hardcoding party members and enemies
-	void createParties(std::vector<Engine::ECS::Entity> &partyMembers, std::vector<Engine::ECS::Entity> &enemies) const;
-
+	void createParties(std::vector<Entity> &partyMembers, std::vector<Entity> &enemies) const;
 	void startBattle();
 	void endBattle() const;
 
   public:
-	explicit BattleMode(BattleMessageBus &messageBus, Engine::ECS::World &world);
+	BattleMode(BattleMessageBus &messageBus, World &world, BattleState battleState, CombatActionExecutor executor);
 };
+} // namespace Engine::ECS

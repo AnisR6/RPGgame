@@ -1,8 +1,7 @@
 #pragma once
 #include "game_state/ecs/entity/Entity.hpp"
-#include "game_state/ecs/system/combat/Structure/CombatAction.hpp"
-
 #include <variant>
+#include <vector>
 
 // this request gets all spells, skills, items in inventory, etc.
 // when the battle starts
@@ -17,8 +16,16 @@ struct BattleInfoResponse {
 struct CombatActionRequest {
 	Engine::ECS::Entity actorEntity;
 	std::vector<Engine::ECS::Entity> targetEntities;
-	ActionType actionType = ActionType::BASE_ATTACK;
-	int actionId = -1;
+	Engine::ECS::Entity actionEntity;
 };
 
-using BattleMessage = std::variant<BattleInfoRequest, BattleInfoResponse, CombatActionRequest>;
+struct ShowBattleDialogRequest {};
+
+struct ShowBattleDialogFinished {};
+
+struct PlayBattleAnimationRequest {};
+
+struct PlayBattleAnimationFinished {};
+
+using BattleMessage = std::variant<BattleInfoRequest, BattleInfoResponse, CombatActionRequest, ShowBattleDialogRequest,
+                                   ShowBattleDialogFinished, PlayBattleAnimationRequest, PlayBattleAnimationFinished>;

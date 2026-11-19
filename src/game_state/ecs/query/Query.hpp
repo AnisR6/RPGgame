@@ -173,19 +173,6 @@ class Query<Including<FirstIncluded, Included...>, Excluding<Excluded...>> {
 		return Count() == 0;
 	}
 
-	[[nodiscard]]
-	std::optional<Entity> TryGetSingleEntity() const
-	{
-		std::optional<Entity> result;
-		std::size_t count = 0;
-		ForEach([&](Entity entity, auto &&...) {
-			count++;
-			result = entity;
-		});
-
-		return count == 1 ? result : std::nullopt;
-	}
-
   private:
 	// ------------------------------------------------------------
 	// Matching Helpers

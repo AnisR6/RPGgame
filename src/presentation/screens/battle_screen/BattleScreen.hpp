@@ -1,39 +1,46 @@
 #pragma once
-#include "application/battle/CombatantInfo.hpp"
 #include "application/callbacks/BattleMenuCallbacks.hpp"
-#include "game_state/ecs/system/combat/Structure/TargetScope.hpp"
+#include "application/menu_entries/BattleActionMenuEntry.hpp"
+#include "application/menu_entries/BattleActorMenuData.hpp"
+#include "application/menu_entries/CombatantMenuEntry.hpp"
+#include "game_state/ecs/components/combat/TargetScopeComponent.hpp"
 #include "presentation/screens/core/Screen.hpp"
 
 class BattleScreen : public Screen {
   private:
 	BattleScreen();
-	std::vector<CombatantInfo> playerPartyInfo;
-	std::vector<CombatantInfo> enemyPartyInfo;
+	std::vector<CombatantMenuEntry> playerParty;
+	std::vector<CombatantMenuEntry> enemies;
 	std::size_t currentPartyMemberIndex = 0;
+
+	BattleActorMenuData battleActorMenuData;
 
 	BattleMenuCallbacks callbacks;
 
 	std::unique_ptr<Widget> createMainBattleMenu();
 
-	template <typename T, typename GetId, typename GetName, typename GetTargetScope>
-	std::unique_ptr<Widget> createSubMenu(const std::vector<T> &subMenuEntries,
-	                                      const std::function<void(std::vector<Engine::ECS::Entity>, int)> &onSelected,
-	                                      GetId getId, GetName getName, GetTargetScope getTargetScope);
+	std::unique_ptr<Widget> createSubMenu(const std::vector<BattleActionMenuEntry> &entries);
 
 	std::unique_ptr<Widget>
 	createTargetMenu(TargetScope targetScope,
 	                 const std::function<void(std::vector<Engine::ECS::Entity>)> &onTargetSelected);
+
+	void selectAction(const BattleActionMenuEntry &action);
 	void showMain();
-	template <typename T>
-	void showSubMenu();
+	void showSpellMenu();
+	void showSkillMenu();
 	void showTargetMenu(TargetScope targetScope,
 	                    const std::function<void(std::vector<Engine::ECS::Entity>)> &onTargetSelected);
+
+	[[nodiscard]] std::optional<std::string> getTargetLabel(TargetScope scope,
+	                                                        const std::vector<Engine::ECS::Entity> &targets) const;
 
   public:
 	static BattleScreen &getInstance();
 	void setCallbacks(BattleMenuCallbacks newCallbacks);
-	void setBattleInfo(const std::vector<CombatantInfo> &playerParty, const std::vector<CombatantInfo> &enemies,
+	void setBattleInfo(std::vector<CombatantMenuEntry> newPlayerParty, std::vector<CombatantMenuEntry> newEnemies,
 	                   std::size_t partyMemberIndex);
+	void setBattleActorMenuData(BattleActorMenuData data);
 
 	BattleScreen(const BattleScreen &) = delete;
 	BattleScreen &operator=(const BattleScreen &) = delete;
