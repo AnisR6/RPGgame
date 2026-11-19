@@ -26,10 +26,11 @@ std::vector<CombatAction> EnemyAISystem::possibleActions(const SystemContext &co
 	return posActions;
 }
 
-/*
 float EnemyAISystem::valuateAction(SystemContext &context, const CombatAction &action, const EnemyAIProfile &profile,
                                    const StatsComponent &actorStats)
 {
+	// TODO
+	return 0.f;
 }
 
 std::vector<ScoredAction> EnemyAISystem::valuateActions(SystemContext &context, Entity actor,
@@ -37,6 +38,8 @@ std::vector<ScoredAction> EnemyAISystem::valuateActions(SystemContext &context, 
                                                         const std::vector<Entity> &knownActions,
                                                         const StatsComponent &actorStats)
 {
+	// TODO
+	return {};
 }
 
 CombatAction EnemyAISystem::chooseHighestValuatedAction(SystemContext &context, Entity actor,
@@ -44,6 +47,12 @@ CombatAction EnemyAISystem::chooseHighestValuatedAction(SystemContext &context, 
                                                         const std::vector<Entity> &knownActions,
                                                         const StatsComponent &actorStats)
 {
+	auto actions = possibleActions(context, actor, knownActions);
+	if (actions.empty()) {
+		throw std::runtime_error("EnemyAISystem: Enemy has no available actions");
+	}
+
+	// TODO: replace with real chosen action later
+	return actions.front();
 }
-*/
 } // namespace Engine::ECS

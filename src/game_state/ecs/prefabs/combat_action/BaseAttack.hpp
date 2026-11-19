@@ -2,6 +2,7 @@
 #include "game_state/ecs/components/NameComponent.hpp"
 #include "game_state/ecs/components/combat/ActionComponent.hpp"
 #include "game_state/ecs/components/combat/ActionEffectsComponent.hpp"
+#include "game_state/ecs/components/combat/BaseAttackComponent.hpp"
 #include "game_state/ecs/components/combat/TargetScopeComponent.hpp"
 #include "game_state/ecs/world/World.hpp"
 
@@ -9,6 +10,7 @@ namespace Prefabs {
 
 struct BaseAttackBlueprint {
 	ActionComponent actionComponent;
+	BaseAttackComponent baseAttackComponent;
 	NameComponent nameComponent;
 	TargetScopeComponent targetScopeComponent;
 	ActionEffectsComponent actionEffectsComponent;
@@ -18,6 +20,7 @@ inline Engine::ECS::Entity createBaseAttack(Engine::ECS::World &world, BaseAttac
 {
 	const auto entity = world.CreateEntity();
 	world.EmplaceComponent<ActionComponent>(entity, blueprint.actionComponent);
+	world.EmplaceComponent<BaseAttackComponent>(entity, blueprint.baseAttackComponent);
 	world.EmplaceComponent<NameComponent>(entity, blueprint.nameComponent);
 	world.EmplaceComponent<TargetScopeComponent>(entity, blueprint.targetScopeComponent);
 	world.EmplaceComponent<ActionEffectsComponent>(entity, blueprint.actionEffectsComponent);

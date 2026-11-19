@@ -163,3 +163,19 @@ void BattleScreen::showTargetMenu(const TargetScope targetScope,
 {
 	setRootWidget(createTargetMenu(targetScope, onTargetSelected));
 }
+
+// Dialog
+void BattleScreen::showBattleDialog(const std::string &battleDialogMessage, std::function<void()> onFinished)
+{
+	setRootWidget(menu(column(children(text(battleDialogMessage, 22, sf::Color::White),
+
+	                                   button(onPressed([this, onFinished = std::move(onFinished)]() {
+		                                          showMain();
+		                                          if (onFinished) {
+			                                          onFinished();
+		                                          }
+	                                          }),
+	                                          text("Continue", 20, sf::Color::White))
+
+	                                       ))));
+}

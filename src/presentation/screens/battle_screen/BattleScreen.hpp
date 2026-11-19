@@ -42,6 +42,9 @@ class BattleScreen : public Screen {
 	                   std::size_t partyMemberIndex);
 	void setBattleActorMenuData(BattleActorMenuData data);
 
+	void showBattleDialog(const std::string &battleDialogMessage, std::function<void()> onFinished);
+	void playBattleAnimation();
+
 	BattleScreen(const BattleScreen &) = delete;
 	BattleScreen &operator=(const BattleScreen &) = delete;
 };

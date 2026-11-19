@@ -1,8 +1,14 @@
+#include "application/bus/BattleMessageBus.hpp"
+#include "application/controllers/BattleController.hpp"
+#include "game_logic/modes/game_mode/battle_mode/BattleMode.hpp"
+
 #include <SFML/Graphics.hpp>
 
 #include "game_logic/modes/game_mode/overworld_mode/OverworldMode.hpp"
+#include "game_state/ecs/system/combat/combat_action/combat_action_executor/CombatActionExecutor.hpp"
 #include "presentation/rendering/FontManager.hpp"
 #include "presentation/rendering/Renderer.hpp"
+#include "presentation/screens/battle_screen/BattleScreen.hpp"
 #include "presentation/screens/boot_screen/MainMenuScreen.hpp"
 #include "presentation/screens/core/Screen.hpp"
 
@@ -15,6 +21,7 @@ constexpr unsigned framerate_limit = 60;
 const char *window_title = "Contract";
 const char *geneva_font_path = "assets/fonts/Geneva.ttf";
 constexpr bool debugStartInOverworld = false;
+constexpr bool debugStartInBattle = true;
 } // namespace
 
 int main()
@@ -29,6 +36,16 @@ int main()
 	Screen &activeScreen = MainMenuScreen::getInstance();
 
 	OverworldMode overworldMode;
+
+	Engine::ECS::World world;
+	BattleMessageBus battleMessageBus;
+	CombatActionExecutor executor{world};
+	Engine::ECS::BattleMode battleMode{battleMessageBus, world, {}, executor};
+	BattleController battleController{battleMessageBus, world};
+
+	battleMode.startBattle();
+	battleController.initBattle();
+
 	sf::Clock frameClock;
 
 	while (window.isOpen()) {
@@ -44,7 +61,12 @@ int main()
 			window.clear();
 			overworldMode.render(window);
 			window.display();
+		} else if (debugStartInBattle) {
+			float deltaTime = frameClock.restart().asSeconds();
+			battleMode.Update(deltaTime);
+			renderer.render(window, BattleScreen::getInstance());
 		} else {
+			frameClock.restart();
 			renderer.render(window, activeScreen);
 		}
 	}

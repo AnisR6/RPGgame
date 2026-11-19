@@ -3,7 +3,7 @@
 
 #include <vector>
 
-enum class BattlePhase { PlayerTurn, EnemyAITurn, ExecuteTurn, WinBattle, LoseBattle };
+enum class BattlePhase { PlayerTurn, EnemyAITurn, ExecuteTurn, WonBattle, LostBattle };
 
 struct BattlePhaseState {
 	BattlePhase currentPhase = BattlePhase::PlayerTurn;

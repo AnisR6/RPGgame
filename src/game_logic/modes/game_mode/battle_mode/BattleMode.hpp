@@ -16,17 +16,18 @@ class BattleMode {
 
 	void subscribeToEvents();
 	void registerSystems();
-	void Update(float deltaTime);
 
 	void handleBattleInitRequest() const;
 	void handleCombatActionRequest(const CombatActionRequest &combatActionRequest);
 
 	// To be removed; helper for hardcoding party members and enemies
 	void createParties(std::vector<Entity> &partyMembers, std::vector<Entity> &enemies) const;
-	void startBattle();
-	void endBattle() const;
 
   public:
 	BattleMode(BattleMessageBus &messageBus, World &world, BattleState battleState, CombatActionExecutor executor);
+
+	void startBattle();
+	void Update(float deltaTime);
+	void endBattle() const;
 };
 } // namespace Engine::ECS

@@ -1,5 +1,7 @@
 #pragma once
 #include "game_state/ecs/entity/Entity.hpp"
+
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -19,11 +21,19 @@ struct CombatActionRequest {
 	Engine::ECS::Entity actionEntity;
 };
 
-struct ShowBattleDialogRequest {};
+struct ShowBattleDialogRequest {
+	Engine::ECS::Entity actorEntity;
+	Engine::ECS::Entity actionEntity;
+	std::vector<Engine::ECS::Entity> targetEntities;
+};
 
 struct ShowBattleDialogFinished {};
 
-struct PlayBattleAnimationRequest {};
+struct PlayBattleAnimationRequest {
+	Engine::ECS::Entity actorEntity;
+	Engine::ECS::Entity actionEntity;
+	std::vector<Engine::ECS::Entity> targetEntities;
+};
 
 struct PlayBattleAnimationFinished {};
 
