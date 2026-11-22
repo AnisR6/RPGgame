@@ -17,7 +17,7 @@ class BattleMode {
 	void subscribeToEvents();
 	void registerSystems();
 
-	void handleBattleInitRequest() const;
+	void handleBattleInfoRequest() const;
 	void handleCombatActionRequest(const CombatActionRequest &combatActionRequest);
 
 	// To be removed; helper for hardcoding party members and enemies

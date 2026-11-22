@@ -37,5 +37,8 @@ struct PlayBattleAnimationRequest {
 
 struct PlayBattleAnimationFinished {};
 
-using BattleMessage = std::variant<BattleInfoRequest, BattleInfoResponse, CombatActionRequest, ShowBattleDialogRequest,
-                                   ShowBattleDialogFinished, PlayBattleAnimationRequest, PlayBattleAnimationFinished>;
+struct PlayerTurnStarted {};
+
+using BattleMessage =
+    std::variant<BattleInfoRequest, BattleInfoResponse, CombatActionRequest, ShowBattleDialogRequest,
+                 ShowBattleDialogFinished, PlayBattleAnimationRequest, PlayBattleAnimationFinished, PlayerTurnStarted>;

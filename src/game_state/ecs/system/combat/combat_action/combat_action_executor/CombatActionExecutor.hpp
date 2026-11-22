@@ -1,19 +1,21 @@
 #pragma once
 #include "../CombatAction.hpp"
 #include "game_state/ecs/components/combat/ActionEffectsComponent.hpp"
+#include "game_state/ecs/components/combat/StatsComponent.hpp"
 #include "game_state/ecs/world/World.hpp"
 
 class CombatActionExecutor {
   private:
 	Engine::ECS::World &world;
 
-	void applyEffect(const DamageEffect &effect, const CombatAction &action);
-	void applyEffect(const HealingEffect &effect, const CombatAction &action);
+	void applyEffect(const DamageEffect &effect, const CombatAction &action) const;
+	void applyEffect(const HealingEffect &effect, const CombatAction &action) const;
+	void applyEffect(const CostMPEffect &effect, const CombatAction &action) const;
 
-	static int computePhysicalDamage(int actor_atk, int target_def);
-	static int computeMagicalDamage(int actor_mag, int target_res);
+	[[nodiscard]] StatsComponent &getStats(Engine::ECS::Entity combatantEntity) const;
 
   public:
 	explicit CombatActionExecutor(Engine::ECS::World &world) : world(world) {}
+	// TODO: should return a CombatActionResult which contains additional info for dialog
 	void execute(CombatAction action);
 };

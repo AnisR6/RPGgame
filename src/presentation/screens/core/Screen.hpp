@@ -24,6 +24,15 @@ class Screen {
 
 	[[nodiscard]] const Widget &getRootWidget() const { return *rootWidget; }
 
+	virtual bool handleEvent(const sf::Event &event)
+	{
+		auto [handled, action] = rootWidget->handleEvent(event);
+		if (action) {
+			action();
+		}
+		return handled;
+	}
+
 	void setRootWidget(std::unique_ptr<Widget> newRoot)
 	{
 		if (!newRoot) {

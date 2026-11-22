@@ -1,6 +1,9 @@
 #include "TurnExecutionSystem.hpp"
 
-void Engine::ECS::TurnExecutionSystem::startDialog(const CombatAction &action)
+#include "game_state/ecs/system/combat/turn_order/TurnOrderUtils.hpp"
+
+namespace Engine::ECS {
+void TurnExecutionSystem::startDialog(const CombatAction &action)
 {
 	dialogFinished = false;
 	executionState = ExecutionState::ShowDialog;
@@ -9,7 +12,7 @@ void Engine::ECS::TurnExecutionSystem::startDialog(const CombatAction &action)
 	                                                 .targetEntities = action.targetEntities});
 }
 
-void Engine::ECS::TurnExecutionSystem::startAnimation(const CombatAction &action)
+void TurnExecutionSystem::startAnimation(const CombatAction &action)
 {
 	animationFinished = false;
 	executionState = ExecutionState::PlayAnimation;
@@ -18,7 +21,31 @@ void Engine::ECS::TurnExecutionSystem::startAnimation(const CombatAction &action
 	                                                    .targetEntities = action.targetEntities});
 }
 
-void Engine::ECS::TurnExecutionSystem::finishTurn()
+void TurnExecutionSystem::startNextAction(const SystemContext &context)
+{
+	auto &actions = battleState.roundActionsState.roundActions;
+
+	while (currentActionIndex < actions.size()) {
+		auto &action = actions.at(currentActionIndex);
+
+		if (context.HasComponent<DeadComponent>(action.actorEntity)) {
+			++currentActionIndex;
+			continue;
+		}
+
+		if (!TargetResolver::retarget(context, battleState, action)) {
+			++currentActionIndex;
+			continue;
+		}
+
+		startDialog(action);
+		return;
+	}
+	// No actions left
+	finishTurn(context);
+}
+
+void TurnExecutionSystem::finishTurn(const SystemContext &context)
 {
 	battleState.roundActionsState.roundActions.clear();
 	currentActionIndex = 0;
@@ -26,11 +53,16 @@ void Engine::ECS::TurnExecutionSystem::finishTurn()
 	animationFinished = false;
 	executionState = ExecutionState::Idle;
 
+	const auto &turnOrder = battleState.turnOrderState;
+	battleState.turnOrderState.currentActorIndex =
+	    TurnOrderUtils::findNextLivingPartyMemberIndex(turnOrder.playerPartyEntities, 0, context);
 	battleState.battlePhaseState.currentPhase = BattlePhase::PlayerTurn;
+
+	battleMessageBus.publish(PlayerTurnStarted{});
 }
 
-// TODO: explicit handling via WonBattle / LostBattle Messages
-void Engine::ECS::TurnExecutionSystem::finishBattle(const BattleOutcome outcome)
+// TODO: explicit handling via WonBattle / LostBattle Messages => initiating transition back to Overworld
+void TurnExecutionSystem::finishBattle(const BattleOutcome outcome)
 {
 	if (outcome == BattleOutcome::Ongoing) {
 		return;
@@ -48,3 +80,4 @@ void Engine::ECS::TurnExecutionSystem::finishBattle(const BattleOutcome outcome)
 	animationFinished = false;
 	executionState = ExecutionState::Idle;
 }
+} // namespace Engine::ECS

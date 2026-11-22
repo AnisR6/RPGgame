@@ -33,7 +33,7 @@ int main()
 	fonts.loadFont(FontId::Geneva, geneva_font_path);
 
 	Renderer renderer(fonts);
-	Screen &activeScreen = MainMenuScreen::getInstance();
+	Screen *activeScreen = &MainMenuScreen::getInstance();
 
 	OverworldMode overworldMode;
 
@@ -44,30 +44,35 @@ int main()
 	BattleController battleController{battleMessageBus, world};
 
 	battleMode.startBattle();
-	battleController.initBattle();
+	battleController.requestBattleInfo();
 
 	sf::Clock frameClock;
 
+	if (debugStartInBattle) {
+		activeScreen = &BattleScreen::getInstance();
+	}
+
 	while (window.isOpen()) {
-		while (const std::optional event = window.pollEvent()) {
+		while (const auto event = window.pollEvent()) {
 			if (event->is<sf::Event::Closed>()) {
 				window.close();
+				continue;
 			}
+			activeScreen->handleEvent(*event);
 		}
+
+		const float deltaTime = frameClock.restart().asSeconds();
 		if (debugStartInOverworld) {
-			const float secondsSinceLastFrame = frameClock.restart().asSeconds();
-			overworldMode.update(secondsSinceLastFrame);
+			overworldMode.update(deltaTime);
 
 			window.clear();
 			overworldMode.render(window);
 			window.display();
 		} else if (debugStartInBattle) {
-			float deltaTime = frameClock.restart().asSeconds();
 			battleMode.Update(deltaTime);
-			renderer.render(window, BattleScreen::getInstance());
+			renderer.render(window, *activeScreen);
 		} else {
-			frameClock.restart();
-			renderer.render(window, activeScreen);
+			renderer.render(window, *activeScreen);
 		}
 	}
 

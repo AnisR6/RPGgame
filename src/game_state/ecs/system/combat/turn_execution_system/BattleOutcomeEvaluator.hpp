@@ -5,14 +5,15 @@
 
 #include <algorithm>
 
-enum class BattleOutcome { Ongoing, Victory, Defeat };
+// TODO: implement Escaped outcome for Flee
+enum class BattleOutcome { Ongoing, Victory, Defeat, Escaped };
 
 class BattleOutcomeEvaluator {
 
   public:
 	static BattleOutcome evaluate(const Engine::ECS::SystemContext &context, const BattleState &battleState)
 	{
-		const auto isAlive = [&context](Engine::ECS::Entity entity) {
+		const auto isAlive = [&context](const Engine::ECS::Entity entity) {
 			return context.GetComponent<StatsComponent>(entity).currHP > 0;
 		};
 

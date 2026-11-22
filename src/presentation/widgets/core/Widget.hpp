@@ -1,5 +1,7 @@
 #pragma once
 
+#include "EventResult.hpp"
+
 #include <SFML/Graphics.hpp>
 
 #include <memory>
@@ -21,9 +23,11 @@ class Widget {
 
 	[[nodiscard]] const std::vector<std::unique_ptr<Widget>> &getChildren() const { return children; }
 
-	virtual sf::Vector2f getSize() const = 0;
+	[[nodiscard]] virtual sf::Vector2f getSize() const = 0;
 
 	virtual void draw(sf::RenderTarget &target, sf::Vector2f position) = 0;
+
+	virtual EventResult handleEvent(const sf::Event &event) { return {}; }
 };
 
 template <typename... Types>
