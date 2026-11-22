@@ -1,5 +1,6 @@
 #pragma once
 #include "game_logic/modes/game_mode/battle_mode/BattleMode.hpp"
+#include "game_state/ecs/components/combat/DeadComponent.hpp"
 #include "game_state/ecs/components/combat/EnemyAIComponent.hpp"
 #include "game_state/ecs/components/combat/KnownActionsComponent.hpp"
 #include "game_state/ecs/components/combat/StatsComponent.hpp"
@@ -19,8 +20,8 @@ class EnemyAISystem : public ISystem {
   private:
 	BattleState &battleState;
 
-	std::vector<CombatAction> possibleActions(const SystemContext &context, Entity actor,
-	                                          const std::vector<Entity> &knownActions) const;
+	[[nodiscard]] std::vector<CombatAction> possibleActions(const SystemContext &context, Entity actor,
+	                                                        const std::vector<Entity> &knownActions) const;
 
 	float valuateAction(SystemContext &context, const CombatAction &action, const EnemyAIProfile &profile,
 	                    const StatsComponent &actorStats);
@@ -41,7 +42,8 @@ class EnemyAISystem : public ISystem {
 		}
 
 		// chose action for each enemy, push action onto roundActions
-		const auto query = context.CreateQuery<Including<EnemyAIComponent, KnownActionsComponent, StatsComponent>>();
+		const auto query = context.CreateQuery<Including<EnemyAIComponent, KnownActionsComponent, StatsComponent>,
+		                                       Excluding<DeadComponent>>();
 		query.ForEach([this, &context](const Entity entity, const EnemyAIComponent &ai,
 		                               const KnownActionsComponent &knownActions, const StatsComponent &stats) {
 			const auto bestAction =

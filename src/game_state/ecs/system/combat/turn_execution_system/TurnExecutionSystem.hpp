@@ -2,8 +2,11 @@
 #include "../combat_action/combat_action_executor/CombatActionExecutor.hpp"
 #include "BattleOutcomeEvaluator.hpp"
 #include "application/bus/BattleMessageBus.hpp"
+#include "game_state/ecs/components/combat/DeadComponent.hpp"
 #include "game_state/ecs/system/ISystem.hpp"
 #include "game_state/ecs/system/combat/battle_state/BattleState.hpp"
+#include "game_state/ecs/system/combat/death_system/DeathSystem.hpp"
+#include "game_state/ecs/system/combat/target_resolver/TargetResolver.hpp"
 
 #include <algorithm>
 
@@ -21,9 +24,10 @@ class TurnExecutionSystem : public ISystem {
 	bool animationFinished = false;
 	std::size_t currentActionIndex = 0;
 
+	void startNextAction(const SystemContext &context);
 	void startDialog(const CombatAction &action);
 	void startAnimation(const CombatAction &action);
-	void finishTurn();
+	void finishTurn(const SystemContext &context);
 	void finishBattle(BattleOutcome outcome);
 
   public:
@@ -56,14 +60,9 @@ class TurnExecutionSystem : public ISystem {
 				const auto &statsB = context.GetComponent<StatsComponent>(b.actorEntity);
 				return statsA.speed > statsB.speed;
 			});
+
 			currentActionIndex = 0;
-
-			if (actions.empty()) {
-				finishTurn();
-				return;
-			}
-
-			startDialog(actions.at(currentActionIndex));
+			startNextAction(context);
 			return;
 		}
 		case ExecutionState::ShowDialog: {
@@ -76,9 +75,21 @@ class TurnExecutionSystem : public ISystem {
 			return;
 		}
 		case ExecutionState::ExecuteAction: {
-			const auto &action = actions.at(currentActionIndex);
+
+			// check if actor is still alive before executing their action
+			const CombatAction &action = actions.at(currentActionIndex);
 
 			executor.execute(action);
+
+			const auto &partyMembers = battleState.turnOrderState.playerPartyEntities;
+			const auto &enemies = battleState.turnOrderState.enemyEntities;
+			std::vector<Entity> combatants;
+			combatants.reserve(partyMembers.size() + enemies.size());
+			combatants.insert(combatants.end(), partyMembers.cbegin(), partyMembers.cend());
+			combatants.insert(combatants.end(), enemies.cbegin(), enemies.cend());
+
+			DeathSystem::Update(context, combatants);
+
 			startAnimation(action);
 			return;
 		}
@@ -100,11 +111,7 @@ class TurnExecutionSystem : public ISystem {
 			}
 
 			++currentActionIndex;
-			if (currentActionIndex >= actions.size()) {
-				finishTurn();
-				return;
-			}
-			startDialog(actions[currentActionIndex]);
+			startNextAction(context);
 			return;
 		}
 		}
