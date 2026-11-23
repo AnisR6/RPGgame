@@ -2,13 +2,29 @@
 
 #include "presentation/screens/core/Screen.hpp"
 
+#include <functional>
+
+// -----------------------------------------------------------------------------
+// BootMenuCallbacks
+// -----------------------------------------------------------------------------
+
+struct BootMenuCallbacks {
+        std::function<void()> onStartGame;
+        std::function<void()> onExit;
+};
+
+// -----------------------------------------------------------------------------
+// MainMenuScreen
+// -----------------------------------------------------------------------------
+
 class MainMenuScreen : public Screen {
-  private:
-	MainMenuScreen();
+    public:
+        // -------------------------------------------------------------------------
+        // Construction
+        // -------------------------------------------------------------------------
 
-  public:
-	static MainMenuScreen &getInstance();
+        explicit MainMenuScreen(BootMenuCallbacks callbacks);
 
-	MainMenuScreen(const MainMenuScreen &) = delete;
-	MainMenuScreen &operator=(const MainMenuScreen &) = delete;
+        MainMenuScreen(const MainMenuScreen&) = delete;
+        MainMenuScreen& operator=(const MainMenuScreen&) = delete;
 };

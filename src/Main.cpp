@@ -1,6 +1,6 @@
 #include "application/bus/BattleMessageBus.hpp"
 #include "application/controllers/BattleController.hpp"
-#include "ecs/modes/battle_mode/BattleMode.hpp"
+#include "application/modes/battle_mode/BattleMode.hpp"
 
 #include <SFML/Graphics.hpp>
 
@@ -15,66 +15,66 @@
 #include <optional>
 
 namespace {
-constexpr unsigned window_width = 1280;
-constexpr unsigned window_height = 720;
-constexpr unsigned framerate_limit = 60;
-const char *window_title = "Contract";
-const char *geneva_font_path = "assets/fonts/Geneva.ttf";
-constexpr bool debugStartInOverworld = false;
-constexpr bool debugStartInBattle = true;
+    constexpr unsigned window_width = 1280;
+    constexpr unsigned window_height = 720;
+    constexpr unsigned framerate_limit = 60;
+    const char* window_title = "Contract";
+    const char* geneva_font_path = "assets/fonts/Geneva.ttf";
+    constexpr bool debugStartInOverworld = false;
+    constexpr bool debugStartInBattle = true;
 } // namespace
 
-int main()
-{
-	sf::RenderWindow window(sf::VideoMode({window_width, window_height}), window_title);
-	window.setFramerateLimit(framerate_limit);
+int main() {
+    sf::RenderWindow window(sf::VideoMode({window_width, window_height}), window_title);
+    window.setFramerateLimit(framerate_limit);
 
-	AssetManager assets;
-	assets.LoadFont(FontId::Geneva, geneva_font_path);
+    AssetManager assets;
+    assets.LoadFont(FontId::Geneva, geneva_font_path);
 
-	Renderer renderer(assets);
-	Screen *activeScreen = &MainMenuScreen::getInstance();
+    Renderer renderer(assets);
+    MainMenuScreen mainMenu{{}};
+    Screen* activeScreen = &mainMenu;
 
-	OverworldScreen overworldScreen;
+    OverworldScreen overworldScreen;
 
-	Engine::ECS::World world;
-	BattleMessageBus battleMessageBus;
-	CombatActionExecutor executor{world};
-	Engine::ECS::BattleMode battleMode{battleMessageBus, world, {}, executor};
-	BattleController battleController{battleMessageBus, world};
+    Engine::ECS::World world;
+    BattleMessageBus battleMessageBus;
+    CombatActionExecutor executor{world};
+    Engine::ECS::BattleMode battleMode{battleMessageBus, world, {}, executor};
+    BattleController battleController{battleMessageBus, world};
 
-	battleMode.startBattle();
-	battleController.requestBattleInfo();
+    battleMode.startBattle();
+    battleController.requestBattleInfo();
 
-	sf::Clock frameClock;
+    sf::Clock frameClock;
 
-	if (debugStartInBattle) {
-		activeScreen = &BattleScreen::getInstance();
-	}
+    if (debugStartInBattle) {
+        activeScreen = &BattleScreen::getInstance();
+    }
 
-	while (window.isOpen()) {
-		while (const auto event = window.pollEvent()) {
-			if (event->is<sf::Event::Closed>()) {
-				window.close();
-				continue;
-			}
-			activeScreen->handleEvent(*event);
-		}
+    while (window.isOpen()) {
+        while (const auto event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                window.close();
+                continue;
+            }
+            activeScreen->handleEvent(*event);
+        }
 
-		const float deltaTime = frameClock.restart().asSeconds();
-		if (debugStartInOverworld) {
-			overworldScreen.update(deltaTime);
+        const float deltaTime = frameClock.restart().asSeconds();
+        if (debugStartInOverworld) {
+            overworldScreen.update(deltaTime);
 
-			window.clear();
-			overworldScreen.render(window);
-			window.display();
-		} else if (debugStartInBattle) {
-			battleMode.Update(deltaTime);
-			renderer.Render(window, *activeScreen);
-		} else {
-			renderer.Render(window, *activeScreen);
-		}
-	}
+            window.clear();
+            overworldScreen.render(window);
+            window.display();
+        } else if (debugStartInBattle) {
+            battleMode.Update(deltaTime);
+            renderer.Render(window, *activeScreen);
+        } else {
+            renderer.Render(window, *activeScreen);
+        }
+    }
 
-	return 0;
+    return 0;
 }

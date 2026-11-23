@@ -6,19 +6,20 @@
 #include "presentation/widgets/menu/MenuContainer.hpp"
 #include "presentation/widgets/menu/MenuText.hpp"
 
-MainMenuScreen &MainMenuScreen::getInstance()
-{
-	static MainMenuScreen instance;
-	return instance;
-}
+#include <utility>
 
-MainMenuScreen::MainMenuScreen()
-    : Screen(padding(24.f,
-                     menu(column(children(text("My RPG", 48, sf::Color::White),
-                                          button(onPressed([] {}), text("Start Game", 28, sf::Color::White)),
-                                          button(onPressed([] {}), text("Load Game", 28, sf::Color::White)),
-                                          button(onPressed([] {}), text("Controls", 28, sf::Color::White)),
-                                          button(onPressed([] {}), text("Exit Game", 28, sf::Color::White))))),
-                     {.background = sf::Color::Black, .fillParent = true}))
-{
-}
+// -----------------------------------------------------------------------------
+// Construction
+// -----------------------------------------------------------------------------
+
+MainMenuScreen::MainMenuScreen(BootMenuCallbacks callbacks)
+    : Screen(padding(
+          24.f,
+          menu(column(children(text("My RPG", 48, sf::Color::White),
+                               button(onPressed(std::move(callbacks.onStartGame)),
+                                      text("Start Game", 28, sf::Color::White)),
+                               button(onPressed([] {}), text("Load Game", 28, sf::Color::White)),
+                               button(onPressed([] {}), text("Controls", 28, sf::Color::White)),
+                               button(onPressed(std::move(callbacks.onExit)),
+                                      text("Exit Game", 28, sf::Color::White))))),
+          {.background = sf::Color::Black, .fillParent = true})) {}

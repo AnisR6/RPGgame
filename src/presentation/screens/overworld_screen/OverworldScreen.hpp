@@ -1,8 +1,9 @@
 #pragma once
 
-#include "ecs/system/overworld/OverworldSystemManager.hpp"
-#include "ecs/world/World.hpp"
-#include "presentation/rendering/AssetManager.hpp"
+// -----------------------------------------------------------------------------
+// Overworld Screen
+// -----------------------------------------------------------------------------
+
 #include "presentation/rendering/Renderer.hpp"
 #include "presentation/widgets/core/Widget.hpp"
 
@@ -10,22 +11,26 @@
 
 #include <memory>
 
-// The overworld presentation
 class OverworldScreen {
     public:
+        // -------------------------------------------------------------------------
+        // Construction
+        // -------------------------------------------------------------------------
         OverworldScreen();
 
-        void update(float secondsSinceLastFrame);
+        // -------------------------------------------------------------------------
+        // Presentation
+        // -------------------------------------------------------------------------
+        void Render(sf::RenderTarget& target);
 
-        void render(sf::RenderTarget& target);
-
-        void addWidgetLayer(Renderer::RenderLayer layer, std::unique_ptr<Widget> root);
+        // -------------------------------------------------------------------------
+        // Widget Layer Management
+        // -------------------------------------------------------------------------
+        void AddWidgetLayer(RenderLayer renderLayer, std::unique_ptr<Widget> rootWidget);
 
     private:
-        // the order matters: each one is built after the ones it uses
-        AssetManager assets;
-        const TileMapData* tileMap = nullptr;
-        Engine::ECS::World world;
-        Engine::ECS::OverworldSystemManager systems;
+        // -------------------------------------------------------------------------
+        // Rendering
+        // -------------------------------------------------------------------------
         Renderer renderer;
 };

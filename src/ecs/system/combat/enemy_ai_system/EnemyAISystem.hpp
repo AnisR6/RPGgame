@@ -1,5 +1,5 @@
 #pragma once
-#include "ecs/modes/battle_mode/BattleMode.hpp"
+#include "application/modes/battle_mode/BattleMode.hpp"
 #include "ecs/components/combat/DeadComponent.hpp"
 #include "ecs/components/combat/EnemyAIComponent.hpp"
 #include "ecs/components/combat/KnownActionsComponent.hpp"
