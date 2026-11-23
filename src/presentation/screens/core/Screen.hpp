@@ -23,4 +23,21 @@ class Screen {
 	[[nodiscard]] Widget &getRootWidget() { return *rootWidget; }
 
 	[[nodiscard]] const Widget &getRootWidget() const { return *rootWidget; }
+
+	virtual bool handleEvent(const sf::Event &event)
+	{
+		auto [handled, action] = rootWidget->handleEvent(event);
+		if (action) {
+			action();
+		}
+		return handled;
+	}
+
+	void setRootWidget(std::unique_ptr<Widget> newRoot)
+	{
+		if (!newRoot) {
+			throw std::invalid_argument("Screen requires a valid root widget!");
+		}
+		rootWidget = std::move(newRoot);
+	}
 };

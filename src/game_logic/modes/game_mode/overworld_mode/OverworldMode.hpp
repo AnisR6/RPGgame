@@ -15,5 +15,5 @@ class OverworldMode {
 
   private:
 	TileMap tileMap_;
-	Player player_;
+	Prefabs::Player player_;
 };

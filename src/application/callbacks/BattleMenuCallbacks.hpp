@@ -1,12 +1,11 @@
 #pragma once
+#include "game_state/ecs/entity/Entity.hpp"
+
 #include <functional>
 
 class BattleMenuCallbacks {
 
   public:
-	std::function<void()> onBaseAttack;
-	std::function<void(int)> onSpell;
-	std::function<void(int)> onSkill;
-	std::function<void(int)> onInventory;
-	std::function<void()> onFlight;
+	std::function<void(std::vector<Engine::ECS::Entity> targetEntities, Engine::ECS::Entity actionEntity)>
+	    onActionSelected;
 };
