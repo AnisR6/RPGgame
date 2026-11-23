@@ -1,16 +1,15 @@
 
 #include "ecs/system/overworld/MapInitializationSystem.hpp"
 
-#include "ecs/components/CollisionComponent.hpp"
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/LayerComponent.hpp"
-#include "ecs/components/MapObjectComponent.hpp"
-#include "ecs/components/MapPointComponent.hpp"
-#include "ecs/components/MovementComponent.hpp"
-#include "ecs/components/PositionComponent.hpp"
-#include "ecs/components/SpriteComponent.hpp"
-#include "ecs/prefabs/tiles/Tile.hpp"
-#include "persistence/Tilemap.hpp"
+#include "ecs/components/overworld/CollisionComponent.hpp"
+#include "ecs/components/overworld/InputComponent.hpp"
+#include "ecs/components/overworld/LayerComponent.hpp"
+#include "ecs/components/overworld/MapObjectComponent.hpp"
+#include "ecs/components/overworld/MapPointComponent.hpp"
+#include "ecs/components/overworld/MovementComponent.hpp"
+#include "ecs/components/overworld/PositionComponent.hpp"
+#include "ecs/components/overworld/SpriteComponent.hpp"
+#include "ecs/prefabs/overworld/Tile.hpp"
 #include "presentation/rendering/AssetManager.hpp"
 
 #include <vector>
@@ -21,15 +20,15 @@ namespace {
     // -----------------------------------------------------------------------------
     // Tile Sprite Initialization
     // -----------------------------------------------------------------------------
-    SpriteComponent CreateTileSpriteComponent(const TileMap& tileMap, AssetManager& assets,
+    SpriteComponent CreateTileSpriteComponent(const TileMapData& tileMap, AssetManager& assets,
                                               const std::string& tilesetFolderPath,
                                               int tileNumber) {
-        const Tileset& tileset = tileMap.getTilesets()[tileMap.findTilesetIndex(tileNumber)];
+        const Tileset& tileset = tileMap.tilesets[tileMap.FindTilesetIndex(tileNumber)];
 
         SpriteComponent spriteComponent;
 
         spriteComponent.spriteSheet =
-            assets.loadTexture(tilesetFolderPath + "/" + tileset.imageFile);
+            assets.LoadTexture(tilesetFolderPath + "/" + tileset.imageFile);
 
         spriteComponent.frameWidthInPixels = tileset.squareWidth;
         spriteComponent.frameHeightInPixels = tileset.squareHeight;
@@ -42,14 +41,14 @@ namespace {
     // -----------------------------------------------------------------------------
     // Tile Layer Initialization
     // -----------------------------------------------------------------------------
-    void CreateTileLayerEntities(Engine::ECS::SystemContext& context, const TileMap& tileMap,
+    void CreateTileLayerEntities(Engine::ECS::SystemContext& context, const TileMapData& tileMap,
                                  AssetManager& assets, const std::string& tilesetFolderPath,
                                  const std::vector<int>& topmostLayerIndices, int layerIndex,
                                  const MapLayer& mapLayer) {
-        const int mapWidthInTiles = tileMap.getWidthInTiles();
-        const int tileSizeInPixels = tileMap.getTileSizeInPixels();
+        const int mapWidthInTiles = tileMap.widthInTiles;
+        const int tileSizeInPixels = tileMap.tileSizeInPixels;
 
-        for (int tileY = 0; tileY < tileMap.getHeightInTiles(); ++tileY) {
+        for (int tileY = 0; tileY < tileMap.heightInTiles; ++tileY) {
             for (int tileX = 0; tileX < mapWidthInTiles; ++tileX) {
                 const int cellIndex = tileY * mapWidthInTiles + tileX;
 
@@ -93,7 +92,7 @@ namespace Engine::ECS {
     // -----------------------------------------------------------------------------
     // Construction
     // -----------------------------------------------------------------------------
-    MapInitializationSystem::MapInitializationSystem(const TileMap& tileMap, AssetManager& assets,
+    MapInitializationSystem::MapInitializationSystem(const TileMapData& tileMap, AssetManager& assets,
                                                      std::string tilesetFolderPath,
                                                      sf::Vector2f playerStart,
                                                      std::string playerSpritePath)
@@ -113,11 +112,11 @@ namespace Engine::ECS {
 
         loaded = true;
 
-        const int mapWidthInTiles = tileMap.getWidthInTiles();
-        const int mapHeightInTiles = tileMap.getHeightInTiles();
-        const int tileSizeInPixels = tileMap.getTileSizeInPixels();
+        const int mapWidthInTiles = tileMap.widthInTiles;
+        const int mapHeightInTiles = tileMap.heightInTiles;
+        const int tileSizeInPixels = tileMap.tileSizeInPixels;
 
-        const std::vector<MapLayer>& layers = tileMap.getLayers();
+        const std::vector<MapLayer>& layers = tileMap.layers;
 
         const int mapCellCount = mapWidthInTiles * mapHeightInTiles;
 
@@ -178,13 +177,13 @@ namespace Engine::ECS {
                 }
 
                 const Tileset& tileset =
-                    tileMap.getTilesets()[tileMap.findTilesetIndex(object.tileNumber)];
+                    tileMap.tilesets[tileMap.FindTilesetIndex(object.tileNumber)];
 
                 SpriteComponent& spriteComponent =
                     context.EmplaceComponent<SpriteComponent>(entity);
 
                 spriteComponent.spriteSheet =
-                    assets.loadTexture(tilesetFolderPath + "/" + tileset.imageFile);
+                    assets.LoadTexture(tilesetFolderPath + "/" + tileset.imageFile);
 
                 spriteComponent.frameWidthInPixels = tileset.squareWidth;
 
@@ -215,7 +214,7 @@ namespace Engine::ECS {
 
         SpriteComponent& playerSprite = context.EmplaceComponent<SpriteComponent>(player);
 
-        playerSprite.spriteSheet = assets.loadTexture(playerSpritePath);
+        playerSprite.spriteSheet = assets.LoadTexture(playerSpritePath);
 
         playerSprite.drawOffset =
             sf::Vector2f((playerCollision.boxSizeInPixels - playerSprite.frameWidthInPixels) / 2.0f,

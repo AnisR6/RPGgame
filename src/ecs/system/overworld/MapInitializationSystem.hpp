@@ -8,7 +8,7 @@
 #include <string>
 
 class AssetManager;
-class TileMap;
+struct TileMapData;
 
 namespace Engine::ECS {
 
@@ -20,7 +20,7 @@ namespace Engine::ECS {
             // -------------------------------------------------------------------------
             // Construction
             // -------------------------------------------------------------------------
-            MapInitializationSystem(const TileMap& tileMap, AssetManager& assets,
+            MapInitializationSystem(const TileMapData& tileMap, AssetManager& assets,
                                     std::string tilesetFolderPath, sf::Vector2f playerStart,
                                     std::string playerSpritePath);
 
@@ -33,7 +33,7 @@ namespace Engine::ECS {
             // -------------------------------------------------------------------------
             // Dependencies
             // -----------------------------------------------------------------------------
-            const TileMap& tileMap;
+            const TileMapData& tileMap;
             AssetManager& assets;
 
             // -------------------------------------------------------------------------

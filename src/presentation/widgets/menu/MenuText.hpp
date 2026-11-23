@@ -1,6 +1,6 @@
 #pragma once
 
-#include "presentation/rendering/FontManager.hpp"
+#include "presentation/rendering/AssetManager.hpp"
 #include "presentation/widgets/core/Widget.hpp"
 
 #include <SFML/Graphics.hpp>

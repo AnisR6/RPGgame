@@ -7,7 +7,7 @@
 
 namespace Engine::ECS {
 
-    OverworldSystemManager::OverworldSystemManager(const TileMap& tileMap, AssetManager& assets,
+    OverworldSystemManager::OverworldSystemManager(const TileMapData& tileMap, AssetManager& assets,
                                                    std::string tilesetFolderPath, sf::Vector2f playerStart,
                                                    std::string playerSpritePath)
     {

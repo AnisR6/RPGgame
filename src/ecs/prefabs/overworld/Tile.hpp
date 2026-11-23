@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include "ecs/components/CollisionComponent.hpp"
-#include "ecs/components/LayerComponent.hpp"
-#include "ecs/components/PositionComponent.hpp"
-#include "ecs/components/SpriteComponent.hpp"
+#include "ecs/components/overworld/CollisionComponent.hpp"
+#include "ecs/components/overworld/LayerComponent.hpp"
+#include "ecs/components/overworld/PositionComponent.hpp"
+#include "ecs/components/overworld/SpriteComponent.hpp"
 #include "ecs/entity/Entity.hpp"
 #include "ecs/system/SystemContext.hpp"
 

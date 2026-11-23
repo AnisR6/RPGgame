@@ -2,7 +2,7 @@
 
 #include "ecs/system/ISystem.hpp"
 
-class TileMap;
+struct TileMapData;
 
 namespace Engine::ECS {
 
@@ -14,7 +14,7 @@ namespace Engine::ECS {
             // -------------------------------------------------------------------------
             // Construction
             // -------------------------------------------------------------------------
-            MovementSystem(const TileMap& tileMap);
+            MovementSystem(const TileMapData& tileMap);
 
             // -------------------------------------------------------------------------
             // System Update
@@ -25,7 +25,7 @@ namespace Engine::ECS {
             // -------------------------------------------------------------------------
             // Dependencies
             // -------------------------------------------------------------------------
-            const TileMap& tileMap;
+            const TileMapData& tileMap;
     };
 
 } // namespace Engine::ECS

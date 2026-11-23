@@ -15,42 +15,42 @@
 #include "ecs/world/World.hpp"
 
 namespace Prefabs {
-struct PlayerBlueprint {
-	NameComponent nameComponent;
-	PositionComponent positionComponent;
-	CollisionComponent collisionComponent;
-	MovementComponent movementComponent;
-	SpriteComponent spriteComponent;
-	PartyMemberComponent partyMemberComponent;
-	StatsComponent statsComponent;
-	KnownActionsComponent knownActionsComponent;
-};
+    struct PlayerBlueprint {
+            NameComponent nameComponent;
+            PositionComponent positionComponent;
+            CollisionComponent collisionComponent;
+            MovementComponent movementComponent;
+            SpriteComponent spriteComponent;
+            PartyMemberComponent partyMemberComponent;
+            StatsComponent statsComponent;
+            KnownActionsComponent knownActionsComponent;
+    };
 
-inline Engine::ECS::Entity createPlayer(Engine::ECS::World &world, PlayerBlueprint &&blueprint)
-{
-	const auto entity = world.CreateEntity();
-	world.EmplaceComponent<NameComponent>(entity, std::move(blueprint.nameComponent));
-	world.EmplaceComponent<PositionComponent>(entity, blueprint.positionComponent);
-	world.EmplaceComponent<CollisionComponent>(entity, blueprint.collisionComponent);
-	world.EmplaceComponent<MovementComponent>(entity, blueprint.movementComponent);
-	world.EmplaceComponent<SpriteComponent>(entity, std::move(blueprint.spriteComponent));
-	world.EmplaceComponent<PartyMemberComponent>(entity, blueprint.partyMemberComponent);
-	world.EmplaceComponent<StatsComponent>(entity, blueprint.statsComponent);
-	world.EmplaceComponent<KnownActionsComponent>(entity, blueprint.knownActionsComponent);
-	return entity;
-}
+    inline Engine::ECS::Entity createPlayer(Engine::ECS::World& world,
+                                            PlayerBlueprint&& blueprint) {
+        const auto entity = world.CreateEntity();
+        world.EmplaceComponent<NameComponent>(entity, std::move(blueprint.nameComponent));
+        world.EmplaceComponent<PositionComponent>(entity, blueprint.positionComponent);
+        world.EmplaceComponent<CollisionComponent>(entity, blueprint.collisionComponent);
+        world.EmplaceComponent<MovementComponent>(entity, blueprint.movementComponent);
+        world.EmplaceComponent<SpriteComponent>(entity, std::move(blueprint.spriteComponent));
+        world.EmplaceComponent<PartyMemberComponent>(entity, blueprint.partyMemberComponent);
+        world.EmplaceComponent<StatsComponent>(entity, blueprint.statsComponent);
+        world.EmplaceComponent<KnownActionsComponent>(entity, blueprint.knownActionsComponent);
+        return entity;
+    }
 
-class Player {
-  public:
-	Player(sf::Vector2f startPosition, const std::string &spriteSheetPath);
+    class Player {
+        public:
+            Player(sf::Vector2f startPosition, const std::string& spriteSheetPath);
 
-	// The player's data, as components
-	PositionComponent position;
-	CollisionComponent collision;
-	MovementComponent movement;
-	SpriteComponent sprite;
+            // The player's data, as components
+            PositionComponent position;
+            CollisionComponent collision;
+            MovementComponent movement;
+            SpriteComponent sprite;
 
-  private:
-	sf::Texture spriteTexture;
-};
+        private:
+            sf::Texture spriteTexture;
+    };
 } // namespace Prefabs

@@ -1,6 +1,6 @@
 #include "ecs/system/overworld/InputSystem.hpp"
 
-#include "ecs/components/InputComponent.hpp"
+#include "ecs/components/overworld/InputComponent.hpp"
 #include "ecs/query/Query.hpp"
 
 #include <SFML/Window/Keyboard.hpp>

@@ -1,9 +1,9 @@
 #include "ecs/system/overworld/MovementSystem.hpp"
 
-#include "ecs/components/CollisionComponent.hpp"
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/MovementComponent.hpp"
-#include "ecs/components/PositionComponent.hpp"
+#include "ecs/components/overworld/CollisionComponent.hpp"
+#include "ecs/components/overworld/InputComponent.hpp"
+#include "ecs/components/overworld/MovementComponent.hpp"
+#include "ecs/components/overworld/PositionComponent.hpp"
 #include "ecs/query/Query.hpp"
 #include "ecs/system/overworld/CollisionSystem.hpp"
 
@@ -36,12 +36,12 @@ namespace {
     // -----------------------------------------------------------------------------
     // Horizontal Movement
     // -----------------------------------------------------------------------------
-    void ApplyHorizontalMovement(const TileMap& tileMap, sf::Vector2f& entityPosition,
+    void ApplyHorizontalMovement(const TileMapData& tileMap, sf::Vector2f& entityPosition,
                                  const sf::Vector2f& movementStep,
                                  const CollisionComponent& collisionComponent) {
         const sf::Vector2f horizontalPosition(entityPosition.x + movementStep.x, entityPosition.y);
 
-        if (!CollisionSystem::isBlocked(tileMap, horizontalPosition, collisionComponent)) {
+        if (!Engine::ECS::CollisionSystem::isBlocked(tileMap, horizontalPosition, collisionComponent)) {
             entityPosition.x += movementStep.x;
         }
     }
@@ -49,12 +49,12 @@ namespace {
     // -----------------------------------------------------------------------------
     // Vertical Movement
     // -----------------------------------------------------------------------------
-    void ApplyVerticalMovement(const TileMap& tileMap, sf::Vector2f& entityPosition,
+    void ApplyVerticalMovement(const TileMapData& tileMap, sf::Vector2f& entityPosition,
                                const sf::Vector2f& movementStep,
                                const CollisionComponent& collisionComponent) {
         const sf::Vector2f verticalPosition(entityPosition.x, entityPosition.y + movementStep.y);
 
-        if (!CollisionSystem::isBlocked(tileMap, verticalPosition, collisionComponent)) {
+        if (!Engine::ECS::CollisionSystem::isBlocked(tileMap, verticalPosition, collisionComponent)) {
             entityPosition.y += movementStep.y;
         }
     }
@@ -62,7 +62,7 @@ namespace {
     // -----------------------------------------------------------------------------
     // Entity Movement
     // -----------------------------------------------------------------------------
-    void ApplyEntityMovement(const TileMap& tileMap, sf::Vector2f& entityPosition,
+    void ApplyEntityMovement(const TileMapData& tileMap, sf::Vector2f& entityPosition,
                              const sf::Vector2f& movementStep,
                              const CollisionComponent& collisionComponent) {
         ApplyHorizontalMovement(tileMap, entityPosition, movementStep, collisionComponent);
@@ -77,7 +77,7 @@ namespace Engine::ECS {
     // -----------------------------------------------------------------------------
     // Construction
     // -----------------------------------------------------------------------------
-    MovementSystem::MovementSystem(const TileMap& tileMap)
+    MovementSystem::MovementSystem(const TileMapData& tileMap)
         : tileMap(tileMap) {}
 
     // -----------------------------------------------------------------------------

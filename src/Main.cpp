@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "ecs/system/combat/combat_action/combat_action_executor/CombatActionExecutor.hpp"
-#include "presentation/rendering/FontManager.hpp"
+#include "presentation/rendering/AssetManager.hpp"
 #include "presentation/rendering/Renderer.hpp"
 #include "presentation/screens/battle_screen/BattleScreen.hpp"
 #include "presentation/screens/boot_screen/MainMenuScreen.hpp"
@@ -29,10 +29,10 @@ int main()
 	sf::RenderWindow window(sf::VideoMode({window_width, window_height}), window_title);
 	window.setFramerateLimit(framerate_limit);
 
-	FontManager fonts;
-	fonts.loadFont(FontId::Geneva, geneva_font_path);
+	AssetManager assets;
+	assets.LoadFont(FontId::Geneva, geneva_font_path);
 
-	Renderer renderer(fonts);
+	Renderer renderer(assets);
 	Screen *activeScreen = &MainMenuScreen::getInstance();
 
 	OverworldScreen overworldScreen;
@@ -70,9 +70,9 @@ int main()
 			window.display();
 		} else if (debugStartInBattle) {
 			battleMode.Update(deltaTime);
-			renderer.render(window, *activeScreen);
+			renderer.Render(window, *activeScreen);
 		} else {
-			renderer.render(window, *activeScreen);
+			renderer.Render(window, *activeScreen);
 		}
 	}
 
