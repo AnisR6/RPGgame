@@ -1,7 +1,7 @@
 #include "ecs/system/overworld/AnimationSystem.hpp"
 
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/SpriteComponent.hpp"
+#include "ecs/components/overworld/InputComponent.hpp"
+#include "ecs/components/overworld/SpriteComponent.hpp"
 #include "ecs/query/Query.hpp"
 
 namespace Engine::ECS {

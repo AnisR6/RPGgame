@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ecs/components/CollisionComponent.hpp"
+#include "ecs/components/overworld/CollisionComponent.hpp"
 
 #include <SFML/System/Vector2.hpp>
 

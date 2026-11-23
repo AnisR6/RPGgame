@@ -1,9 +1,9 @@
 #include "ecs/system/overworld/MovementSystem.hpp"
 
-#include "ecs/components/CollisionComponent.hpp"
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/MovementComponent.hpp"
-#include "ecs/components/PositionComponent.hpp"
+#include "ecs/components/overworld/CollisionComponent.hpp"
+#include "ecs/components/overworld/InputComponent.hpp"
+#include "ecs/components/overworld/MovementComponent.hpp"
+#include "ecs/components/overworld/PositionComponent.hpp"
 #include "ecs/query/Query.hpp"
 #include "ecs/system/overworld/CollisionSystem.hpp"
 

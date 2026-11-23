@@ -1,8 +1,8 @@
 #pragma once
 #include "../../../components/combat/StatsComponent.hpp"
-#include "ecs/components/EnemyComponent.hpp"
-#include "ecs/components/NameComponent.hpp"
-#include "ecs/components/SpriteComponent.hpp"
+#include "ecs/components/overworld/EnemyComponent.hpp"
+#include "ecs/components/overworld/NameComponent.hpp"
+#include "ecs/components/overworld/SpriteComponent.hpp"
 #include "ecs/components/combat/EnemyAIComponent.hpp"
 #include "ecs/components/combat/KnownActionsComponent.hpp"
 #include "ecs/entity/Entity.hpp"

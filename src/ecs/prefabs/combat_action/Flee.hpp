@@ -1,5 +1,5 @@
 #pragma once
-#include "ecs/components/NameComponent.hpp"
+#include "ecs/components/overworld/NameComponent.hpp"
 #include "ecs/components/combat/ActionComponent.hpp"
 #include "ecs/components/combat/FleeComponent.hpp"
 #include "ecs/world/World.hpp"

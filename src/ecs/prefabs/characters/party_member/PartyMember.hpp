@@ -1,7 +1,7 @@
 #pragma once
-#include "ecs/components/NameComponent.hpp"
-#include "ecs/components/PartyMemberComponent.hpp"
-#include "ecs/components/SpriteComponent.hpp"
+#include "ecs/components/overworld/NameComponent.hpp"
+#include "ecs/components/overworld/PartyMemberComponent.hpp"
+#include "ecs/components/overworld/SpriteComponent.hpp"
 #include "ecs/entity/Entity.hpp"
 #include "ecs/world/World.hpp"
 

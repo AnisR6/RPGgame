@@ -1,21 +1,18 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
-#include <string>
-
-#include "../../../components/combat/StatsComponent.hpp"
-#include "ecs/components/CollisionComponent.hpp"
-#include "ecs/components/MovementComponent.hpp"
-#include "ecs/components/NameComponent.hpp"
-#include "ecs/components/PartyMemberComponent.hpp"
-#include "ecs/components/PositionComponent.hpp"
-#include "ecs/components/SpriteComponent.hpp"
 #include "ecs/components/combat/KnownActionsComponent.hpp"
+#include "ecs/components/combat/StatsComponent.hpp"
+#include "ecs/components/overworld/CollisionComponent.hpp"
+#include "ecs/components/overworld/MovementComponent.hpp"
+#include "ecs/components/overworld/NameComponent.hpp"
+#include "ecs/components/overworld/PartyMemberComponent.hpp"
+#include "ecs/components/overworld/PositionComponent.hpp"
+#include "ecs/components/overworld/SpriteComponent.hpp"
 #include "ecs/entity/Entity.hpp"
 #include "ecs/world/World.hpp"
 
 namespace Prefabs {
-struct PlayerBlueprint {
+struct CombatPlayerBlueprint {
 	NameComponent nameComponent;
 	PositionComponent positionComponent;
 	CollisionComponent collisionComponent;
@@ -26,7 +23,7 @@ struct PlayerBlueprint {
 	KnownActionsComponent knownActionsComponent;
 };
 
-inline Engine::ECS::Entity createPlayer(Engine::ECS::World &world, PlayerBlueprint &&blueprint)
+inline Engine::ECS::Entity createCombatPlayer(Engine::ECS::World &world, CombatPlayerBlueprint &&blueprint)
 {
 	const auto entity = world.CreateEntity();
 	world.EmplaceComponent<NameComponent>(entity, std::move(blueprint.nameComponent));
@@ -39,15 +36,4 @@ inline Engine::ECS::Entity createPlayer(Engine::ECS::World &world, PlayerBluepri
 	world.EmplaceComponent<KnownActionsComponent>(entity, blueprint.knownActionsComponent);
 	return entity;
 }
-
-class Player {
-  public:
-	Player(sf::Vector2f startPosition, const std::string &spriteSheetPath);
-
-	// The player's data, as components
-	PositionComponent position;
-	CollisionComponent collision;
-	MovementComponent movement;
-	SpriteComponent sprite;
-};
 } // namespace Prefabs

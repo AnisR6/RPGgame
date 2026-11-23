@@ -1,9 +1,9 @@
 #include "presentation/layers/PresentationLayers.hpp"
 
-#include "ecs/components/InputComponent.hpp"
-#include "ecs/components/LayerComponent.hpp"
-#include "ecs/components/PositionComponent.hpp"
-#include "ecs/components/SpriteComponent.hpp"
+#include "ecs/components/overworld/InputComponent.hpp"
+#include "ecs/components/overworld/LayerComponent.hpp"
+#include "ecs/components/overworld/PositionComponent.hpp"
+#include "ecs/components/overworld/SpriteComponent.hpp"
 #include "ecs/world/World.hpp"
 #include "presentation/rendering/AssetManager.hpp"
 #include "presentation/rendering/SpriteRenderer.hpp"

@@ -3,7 +3,7 @@
 #include <utility>
 
 #include "application/messages/BattleMessage.hpp"
-#include "ecs/components/NameComponent.hpp"
+#include "ecs/components/overworld/NameComponent.hpp"
 #include "ecs/components/combat/BaseAttackComponent.hpp"
 #include "ecs/components/combat/CombatSkillComponent.hpp"
 #include "ecs/components/combat/DeadComponent.hpp"

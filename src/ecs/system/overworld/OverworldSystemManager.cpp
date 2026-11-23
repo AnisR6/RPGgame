@@ -2,7 +2,6 @@
 
 #include "ecs/system/overworld/AnimationSystem.hpp"
 #include "ecs/system/overworld/InputSystem.hpp"
-#include "ecs/system/overworld/InteractionSystem.hpp"
 #include "ecs/system/overworld/MapInitializationSystem.hpp"
 #include "ecs/system/overworld/MovementSystem.hpp"
 
@@ -16,7 +15,6 @@ namespace Engine::ECS {
         RegisterSystem<MapInitializationSystem>(tileMap, assets, std::move(tilesetFolderPath), playerStart,
                                                 std::move(playerSpritePath));
         RegisterSystem<InputSystem>();
-        RegisterSystem<InteractionSystem>();
         RegisterSystem<AnimationSystem>();
         RegisterSystem<MovementSystem>(tileMap);
     }
