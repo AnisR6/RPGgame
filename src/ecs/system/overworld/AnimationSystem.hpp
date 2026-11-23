@@ -4,9 +4,14 @@
 
 namespace Engine::ECS {
 
-    // standing: the standing frame of the direction we look at. Walking: the 4 frames of that direction.
+    // -----------------------------------------------------------------------------
+    // Animation System
+    // -----------------------------------------------------------------------------
     class AnimationSystem : public ISystem {
         public:
+            // -------------------------------------------------------------------------
+            // System Update
+            // -------------------------------------------------------------------------
             void Update(SystemContext& context, float deltaTime) override;
     };
 

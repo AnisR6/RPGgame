@@ -1,8 +1,8 @@
-#include "ecs/prefabs/characters/player/OverworldPlayer.hpp"
+#include "ecs/prefabs/characters/player/Player.hpp"
 
 #include <iostream>
 
-Prefabs::OverworldPlayer::OverworldPlayer(sf::Vector2f startPosition, const std::string &spriteSheetPath)
+Prefabs::Player::Player(sf::Vector2f startPosition, const std::string &spriteSheetPath)
 {
 	position.position = startPosition;
 

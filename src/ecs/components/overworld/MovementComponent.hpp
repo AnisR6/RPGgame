@@ -2,7 +2,9 @@
 
 #include <SFML/System/Vector2.hpp>
 
-// How fast an entity walks
+// -----------------------------------------------------------------------------
+// Movement Component
+// -----------------------------------------------------------------------------
 struct MovementComponent {
-	float speedInPixelsPerSecond = 120.0f;
+        float speedInPixelsPerSecond = 120.0f;
 };

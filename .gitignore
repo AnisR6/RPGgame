@@ -375,3 +375,6 @@ compile_commands.json
 
 # Local formatting config
 .clang-format
+
+# Local presentation notes
+docs/presentations/presentation2/presentation2.md

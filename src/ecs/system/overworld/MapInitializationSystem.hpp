@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include "ecs/system/ISystem.hpp"
@@ -11,21 +12,35 @@ class TileMap;
 
 namespace Engine::ECS {
 
-    // On the first update, makes the entities of the map:
-    // every picture of the object layers (tree, house, sheep, foam...), every map point (NPC, save point...) and the player.
-    // The ground (water, sand, grass, cliffs) is not made of entities: it stays in the TileMap.
+    // -----------------------------------------------------------------------------
+    // Map Initialization System
+    // -----------------------------------------------------------------------------
     class MapInitializationSystem : public ISystem {
         public:
-            MapInitializationSystem(const TileMap& tileMap, AssetManager& assets, std::string tilesetFolderPath,
-                                    sf::Vector2f playerStart, std::string playerSpritePath);
+            // -------------------------------------------------------------------------
+            // Construction
+            // -------------------------------------------------------------------------
+            MapInitializationSystem(const TileMap& tileMap, AssetManager& assets,
+                                    std::string tilesetFolderPath, sf::Vector2f playerStart,
+                                    std::string playerSpritePath);
 
+            // -------------------------------------------------------------------------
+            // System Update
+            // -------------------------------------------------------------------------
             void Update(SystemContext& context, float deltaTime) override;
 
         private:
+            // -------------------------------------------------------------------------
+            // Dependencies
+            // -----------------------------------------------------------------------------
             const TileMap& tileMap;
             AssetManager& assets;
+
+            // -------------------------------------------------------------------------
+            // Initialization Data
+            // -----------------------------------------------------------------------------
             std::string tilesetFolderPath;
-            sf::Vector2f playerStart; // used if the map has no "PlayerSpawn" point
+            sf::Vector2f playerStart;
             std::string playerSpritePath;
             bool loaded = false;
     };

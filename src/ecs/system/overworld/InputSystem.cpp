@@ -1,44 +1,55 @@
 #include "ecs/system/overworld/InputSystem.hpp"
 
-#include "ecs/components/overworld/InputComponent.hpp"
+#include "ecs/components/InputComponent.hpp"
 #include "ecs/query/Query.hpp"
 
 #include <SFML/Window/Keyboard.hpp>
 
 namespace {
-    sf::Vector2f readArrowKeys()
-    {
-        sf::Vector2f walkDirection(0.0f, 0.0f);
+    // -----------------------------------------------------------------------------
+    // Keyboard Input
+    // -----------------------------------------------------------------------------
+    sf::Vector2f ReadMovementDirectionFromArrowKeys() {
+        sf::Vector2f movementDirection(0.0f, 0.0f);
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right)) {
-            walkDirection.x += 1.0f;
+            movementDirection.x += 1.0f;
         }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left)) {
-            walkDirection.x -= 1.0f;
+            movementDirection.x -= 1.0f;
         }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down)) {
-            walkDirection.y += 1.0f;
+            movementDirection.y += 1.0f;
         }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) {
-            walkDirection.y -= 1.0f;
+            movementDirection.y -= 1.0f;
         }
-        return walkDirection;
+
+        return movementDirection;
     }
+
 } // namespace
 
 namespace Engine::ECS {
 
-    void InputSystem::Update(SystemContext& context, float)
-    {
-        // E: only the frame it goes down counts, not while it is held
+    // -----------------------------------------------------------------------------
+    // System Update
+    // -----------------------------------------------------------------------------
+    void InputSystem::Update(SystemContext& context, float) {
         const bool isInteractKeyDown = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::E);
-        const bool interactJustPressed = isInteractKeyDown && !wasInteractKeyDown;
+
+        const bool interactKeyJustPressed = isInteractKeyDown && !wasInteractKeyDown;
+
         wasInteractKeyDown = isInteractKeyDown;
 
-        auto controlled = context.CreateQuery<Including<InputComponent>>();
-        controlled.ForEach([&](Entity, InputComponent& input) {
-            input.walkDirection = readArrowKeys();
-            input.interactJustPressed = interactJustPressed;
+        auto controlledEntities = context.CreateQuery<Including<InputComponent>>();
+
+        controlledEntities.ForEach([&](Entity, InputComponent& inputComponent) {
+            inputComponent.walkDirection = ReadMovementDirectionFromArrowKeys();
+            inputComponent.interactJustPressed = interactKeyJustPressed;
         });
     }
-
 } // namespace Engine::ECS

@@ -4,12 +4,23 @@
 
 namespace Engine::ECS {
 
-    class InputSystem : public ISystem {
-        public:
-            void Update(SystemContext& context, float deltaTime) override;
+// -----------------------------------------------------------------------------
+// Input System
+// -----------------------------------------------------------------------------
+class InputSystem : public ISystem {
+public:
 
-        private:
-            bool wasInteractKeyDown = false; // E in the last frame
-    };
+    // -------------------------------------------------------------------------
+    // System Update
+    // -------------------------------------------------------------------------
+    void Update(SystemContext& context, float deltaTime) override;
+
+private:
+
+    // -------------------------------------------------------------------------
+    // Input State
+    // -------------------------------------------------------------------------
+    bool wasInteractKeyDown = false;
+};
 
 } // namespace Engine::ECS

@@ -1,45 +1,89 @@
 #include "ecs/system/overworld/AnimationSystem.hpp"
 
-#include "ecs/components/overworld/InputComponent.hpp"
-#include "ecs/components/overworld/SpriteComponent.hpp"
+#include "ecs/components/InputComponent.hpp"
+#include "ecs/components/SpriteComponent.hpp"
 #include "ecs/query/Query.hpp"
+
+namespace {
+
+    // -----------------------------------------------------------------------------
+    // Facing Direction
+    // -----------------------------------------------------------------------------
+    void UpdateFacingStandingFrame(const sf::Vector2f& movementDirection,
+                                   SpriteComponent& spriteComponent) {
+        if (movementDirection.x < 0.0f) {
+            spriteComponent.facingStandingFrame = spriteComponent.standingLeftFrame;
+        } else if (movementDirection.x > 0.0f) {
+            spriteComponent.facingStandingFrame = spriteComponent.standingRightFrame;
+        } else if (movementDirection.y < 0.0f) {
+            spriteComponent.facingStandingFrame = spriteComponent.standingUpFrame;
+        } else if (movementDirection.y > 0.0f) {
+            spriteComponent.facingStandingFrame = spriteComponent.standingDownFrame;
+        }
+    }
+
+    // -----------------------------------------------------------------------------
+    // Standing Animation
+    // -----------------------------------------------------------------------------
+    bool IsMovementDirectionZero(const sf::Vector2f& movementDirection) {
+        return movementDirection.x == 0.0f && movementDirection.y == 0.0f;
+    }
+
+    void UpdateStandingAnimationFrame(SpriteComponent& spriteComponent) {
+        spriteComponent.currentFrameNumber = spriteComponent.facingStandingFrame;
+
+        spriteComponent.walkStep = 0;
+        spriteComponent.secondsOnThisStep = 0.0f;
+    }
+
+    // -----------------------------------------------------------------------------
+    // Walking Animation
+    // -----------------------------------------------------------------------------
+    void AdvanceWalkingAnimationFrame(SpriteComponent& spriteComponent, float deltaTime) {
+        spriteComponent.secondsOnThisStep += deltaTime;
+
+        if (spriteComponent.secondsOnThisStep >= spriteComponent.secondsPerStep) {
+            spriteComponent.secondsOnThisStep = 0.0f;
+
+            spriteComponent.walkStep =
+                (spriteComponent.walkStep + 1) % spriteComponent.framesPerRow;
+        }
+
+        const int firstFrameOfRow =
+            (spriteComponent.facingStandingFrame / spriteComponent.framesPerRow) *
+            spriteComponent.framesPerRow;
+
+        spriteComponent.currentFrameNumber = firstFrameOfRow + spriteComponent.walkStep;
+    }
+
+    // -----------------------------------------------------------------------------
+    // Sprite Animation
+    // -----------------------------------------------------------------------------
+    void UpdateSpriteAnimationForInput(const sf::Vector2f& movementDirection,
+                                       SpriteComponent& spriteComponent, float deltaTime) {
+        UpdateFacingStandingFrame(movementDirection, spriteComponent);
+
+        if (IsMovementDirectionZero(movementDirection)) {
+            UpdateStandingAnimationFrame(spriteComponent);
+            return;
+        }
+
+        AdvanceWalkingAnimationFrame(spriteComponent, deltaTime);
+    }
+
+} // namespace
 
 namespace Engine::ECS {
 
-    void AnimationSystem::Update(SystemContext& context, float secondsSinceLastFrame)
-    {
-        auto animated = context.CreateQuery<Including<InputComponent, SpriteComponent>>();
+    // -----------------------------------------------------------------------------
+    // System Update
+    // -----------------------------------------------------------------------------
+    void AnimationSystem::Update(SystemContext& context, float deltaTime) {
+        auto animatedEntities = context.CreateQuery<Including<InputComponent, SpriteComponent>>();
 
-        animated.ForEach([&](Entity, InputComponent& input, SpriteComponent& sprite) {
-            const sf::Vector2f direction = input.walkDirection;
-
-            // 1. which way do we look? (left/right wins over up/down)
-            if (direction.x < 0.0f) {
-                sprite.facingStandingFrame = sprite.standingLeftFrame;
-            } else if (direction.x > 0.0f) {
-                sprite.facingStandingFrame = sprite.standingRightFrame;
-            } else if (direction.y < 0.0f) {
-                sprite.facingStandingFrame = sprite.standingUpFrame;
-            } else if (direction.y > 0.0f) {
-                sprite.facingStandingFrame = sprite.standingDownFrame;
-            }
-
-            // 2. standing still: the standing frame
-            if (direction.x == 0.0f && direction.y == 0.0f) {
-                sprite.currentFrameNumber = sprite.facingStandingFrame;
-                sprite.walkStep = 0;
-                sprite.secondsOnThisStep = 0.0f;
-                return;
-            }
-
-            // 3. walking: every 0.15 s the next of the 4 frames (0, 1, 2, 3, 0, 1...)
-            sprite.secondsOnThisStep += secondsSinceLastFrame;
-            if (sprite.secondsOnThisStep >= sprite.secondsPerStep) {
-                sprite.secondsOnThisStep = 0.0f;
-                sprite.walkStep = (sprite.walkStep + 1) % sprite.framesPerRow;
-            }
-            const int firstFrameOfRow = (sprite.facingStandingFrame / sprite.framesPerRow) * sprite.framesPerRow;
-            sprite.currentFrameNumber = firstFrameOfRow + sprite.walkStep;
+        animatedEntities.ForEach([&](Entity, InputComponent& inputComponent,
+                                     SpriteComponent& spriteComponent) {
+            UpdateSpriteAnimationForInput(inputComponent.walkDirection, spriteComponent, deltaTime);
         });
     }
 

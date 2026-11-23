@@ -1,6 +1,8 @@
 #pragma once
 
-// The invisible square that hits walls
+// -----------------------------------------------------------------------------
+// Collision Component
+// -----------------------------------------------------------------------------
 struct CollisionComponent {
-	float boxSizeInPixels = 24.0f;
+    float boxSizeInPixels = 24.0f;
 };

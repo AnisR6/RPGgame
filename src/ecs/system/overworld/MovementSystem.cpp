@@ -1,41 +1,104 @@
 #include "ecs/system/overworld/MovementSystem.hpp"
 
-#include "ecs/components/overworld/CollisionComponent.hpp"
-#include "ecs/components/overworld/InputComponent.hpp"
-#include "ecs/components/overworld/MovementComponent.hpp"
-#include "ecs/components/overworld/PositionComponent.hpp"
+#include "ecs/components/CollisionComponent.hpp"
+#include "ecs/components/InputComponent.hpp"
+#include "ecs/components/MovementComponent.hpp"
+#include "ecs/components/PositionComponent.hpp"
 #include "ecs/query/Query.hpp"
 #include "ecs/system/overworld/CollisionSystem.hpp"
 
 #include <cmath>
 
-namespace Engine::ECS {
+namespace {
 
-    MovementSystem::MovementSystem(const TileMap& tileMap) : tileMap(tileMap) {}
+    // -----------------------------------------------------------------------------
+    // Movement Direction
+    // -----------------------------------------------------------------------------
+    sf::Vector2f NormalizeMovementDirection(sf::Vector2f movementDirection) {
+        const float movementDirectionLength = std::sqrt(movementDirection.x * movementDirection.x +
+                                                        movementDirection.y * movementDirection.y);
 
-    void MovementSystem::Update(SystemContext& context, float secondsSinceLastFrame)
-    {
-        // InputComponent first: a query loops over the entities of its FIRST component (only the player has one)
-        auto movers = context.CreateQuery<Including<InputComponent, PositionComponent, MovementComponent, CollisionComponent>>();
+        if (movementDirectionLength > 1.0f) {
+            movementDirection /= movementDirectionLength;
+        }
 
-        movers.ForEach([&](Entity, InputComponent& input, PositionComponent& position, MovementComponent& movement,
-                           CollisionComponent& collision) {
-            // diagonal (1, 1) is longer than 1: make it 1, so walking diagonally is not faster
-            sf::Vector2f direction = input.walkDirection;
-            const float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-            if (length > 1.0f) {
-                direction /= length;
-            }
-            const sf::Vector2f step = direction * movement.speedInPixelsPerSecond * secondsSinceLastFrame;
-
-            // first x, then y: a blocked side is skipped, so the player slides along walls
-            if (!CollisionSystem::isBlocked(tileMap, { position.position.x + step.x, position.position.y }, collision)) {
-                position.position.x += step.x;
-            }
-            if (!CollisionSystem::isBlocked(tileMap, { position.position.x, position.position.y + step.y }, collision)) {
-                position.position.y += step.y;
-            }
-        });
+        return movementDirection;
     }
 
-}
+    // -----------------------------------------------------------------------------
+    // Movement Distance
+    // -----------------------------------------------------------------------------
+    sf::Vector2f CalculateMovementStep(const sf::Vector2f& movementDirection,
+                                       float movementSpeedInPixelsPerSecond, float deltaTime) {
+        return movementDirection * movementSpeedInPixelsPerSecond * deltaTime;
+    }
+
+    // -----------------------------------------------------------------------------
+    // Horizontal Movement
+    // -----------------------------------------------------------------------------
+    void ApplyHorizontalMovement(const TileMap& tileMap, sf::Vector2f& entityPosition,
+                                 const sf::Vector2f& movementStep,
+                                 const CollisionComponent& collisionComponent) {
+        const sf::Vector2f horizontalPosition(entityPosition.x + movementStep.x, entityPosition.y);
+
+        if (!CollisionSystem::isBlocked(tileMap, horizontalPosition, collisionComponent)) {
+            entityPosition.x += movementStep.x;
+        }
+    }
+
+    // -----------------------------------------------------------------------------
+    // Vertical Movement
+    // -----------------------------------------------------------------------------
+    void ApplyVerticalMovement(const TileMap& tileMap, sf::Vector2f& entityPosition,
+                               const sf::Vector2f& movementStep,
+                               const CollisionComponent& collisionComponent) {
+        const sf::Vector2f verticalPosition(entityPosition.x, entityPosition.y + movementStep.y);
+
+        if (!CollisionSystem::isBlocked(tileMap, verticalPosition, collisionComponent)) {
+            entityPosition.y += movementStep.y;
+        }
+    }
+
+    // -----------------------------------------------------------------------------
+    // Entity Movement
+    // -----------------------------------------------------------------------------
+    void ApplyEntityMovement(const TileMap& tileMap, sf::Vector2f& entityPosition,
+                             const sf::Vector2f& movementStep,
+                             const CollisionComponent& collisionComponent) {
+        ApplyHorizontalMovement(tileMap, entityPosition, movementStep, collisionComponent);
+
+        ApplyVerticalMovement(tileMap, entityPosition, movementStep, collisionComponent);
+    }
+
+} // namespace
+
+namespace Engine::ECS {
+
+    // -----------------------------------------------------------------------------
+    // Construction
+    // -----------------------------------------------------------------------------
+    MovementSystem::MovementSystem(const TileMap& tileMap)
+        : tileMap(tileMap) {}
+
+    // -----------------------------------------------------------------------------
+    // System Update
+    // -----------------------------------------------------------------------------
+    void MovementSystem::Update(SystemContext& context, float deltaTime) {
+        auto movableEntities = context.CreateQuery<
+            Including<InputComponent, PositionComponent, MovementComponent, CollisionComponent>>();
+
+        movableEntities.ForEach(
+            [&](Entity, InputComponent& inputComponent, PositionComponent& positionComponent,
+                MovementComponent& movementComponent, CollisionComponent& collisionComponent) {
+                const sf::Vector2f movementDirection =
+                    NormalizeMovementDirection(inputComponent.walkDirection);
+
+                const sf::Vector2f movementStep = CalculateMovementStep(
+                    movementDirection, movementComponent.speedInPixelsPerSecond, deltaTime);
+
+                ApplyEntityMovement(tileMap, positionComponent.position, movementStep,
+                                    collisionComponent);
+            });
+    }
+
+} // namespace Engine::ECS

@@ -2,7 +2,7 @@
 
 #include "ecs/prefabs/characters/enemy/Enemy.hpp"
 #include "ecs/prefabs/characters/party_member/PartyMember.hpp"
-#include "ecs/prefabs/characters/player/CombatPlayer.hpp"
+#include "ecs/prefabs/characters/player/Player.hpp"
 #include "ecs/prefabs/combat_action/BaseAttack.hpp"
 #include "ecs/prefabs/combat_action/CombatSkill.hpp"
 #include "ecs/prefabs/combat_action/Flee.hpp"
@@ -80,7 +80,7 @@ void BattleMode::createParties(std::vector<Entity> &partyMembers, std::vector<En
 
 	auto flee = Prefabs::createFlee(world, {{}, {}, "Flee"});
 
-	Prefabs::CombatPlayerBlueprint playerBlueprint{
+	Prefabs::PlayerBlueprint playerBlueprint{
 	    "John Doe", {}, {}, {}, {}, {}, defaultStats, {{baseAttack, fireball, iceSlash, heal, flee}}};
 
 	// creating party members
@@ -88,7 +88,7 @@ void BattleMode::createParties(std::vector<Entity> &partyMembers, std::vector<En
 	Prefabs::PartyMemberBlueprint partyMember2{"Bar", {}, defaultStats, {{baseAttack, heal, flee}}};
 	Prefabs::PartyMemberBlueprint partyMember3{"Baz", {}, defaultStats, {{baseAttack, fireball, flee}}};
 
-	partyMembers = {Prefabs::createCombatPlayer(world, std::move(playerBlueprint)),
+	partyMembers = {Prefabs::createPlayer(world, std::move(playerBlueprint)),
 	                Prefabs::createPartyMember(world, std::move(partyMember1)),
 	                Prefabs::createPartyMember(world, std::move(partyMember2)),
 	                Prefabs::createPartyMember(world, std::move(partyMember3))};
