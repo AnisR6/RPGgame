@@ -3,14 +3,14 @@
 #include <utility>
 
 #include "application/messages/BattleMessage.hpp"
-#include "game_state/ecs/components/NameComponent.hpp"
-#include "game_state/ecs/components/combat/BaseAttackComponent.hpp"
-#include "game_state/ecs/components/combat/CombatSkillComponent.hpp"
-#include "game_state/ecs/components/combat/DeadComponent.hpp"
-#include "game_state/ecs/components/combat/FleeComponent.hpp"
-#include "game_state/ecs/components/combat/KnownActionsComponent.hpp"
-#include "game_state/ecs/components/combat/SpellComponent.hpp"
-#include "game_state/ecs/components/combat/StatsComponent.hpp"
+#include "ecs/components/NameComponent.hpp"
+#include "ecs/components/combat/BaseAttackComponent.hpp"
+#include "ecs/components/combat/CombatSkillComponent.hpp"
+#include "ecs/components/combat/DeadComponent.hpp"
+#include "ecs/components/combat/FleeComponent.hpp"
+#include "ecs/components/combat/KnownActionsComponent.hpp"
+#include "ecs/components/combat/SpellComponent.hpp"
+#include "ecs/components/combat/StatsComponent.hpp"
 #include "presentation/screens/battle_screen/BattleScreen.hpp"
 
 BattleController::BattleController(BattleMessageBus &messageBus, Engine::ECS::World &world)

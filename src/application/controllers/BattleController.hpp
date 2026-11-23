@@ -4,7 +4,7 @@
 #include "application/callbacks/BattleMenuCallbacks.hpp"
 #include "application/menu_entries/BattleActionMenuEntry.hpp"
 #include "application/menu_entries/CombatantMenuEntry.hpp"
-#include "game_state/ecs/world/World.hpp"
+#include "ecs/world/World.hpp"
 
 class BattleController {
   private:

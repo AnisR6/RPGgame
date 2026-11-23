@@ -3,7 +3,7 @@
 #include "application/menu_entries/BattleActionMenuEntry.hpp"
 #include "application/menu_entries/BattleActorMenuData.hpp"
 #include "application/menu_entries/CombatantMenuEntry.hpp"
-#include "game_state/ecs/components/combat/TargetScopeComponent.hpp"
+#include "ecs/components/combat/TargetScopeComponent.hpp"
 #include "presentation/screens/core/Screen.hpp"
 
 class BattleScreen : public Screen {

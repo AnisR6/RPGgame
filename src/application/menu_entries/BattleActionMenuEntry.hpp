@@ -1,6 +1,6 @@
 #pragma once
-#include "game_state/ecs/components/combat/TargetScopeComponent.hpp"
-#include "game_state/ecs/entity/Entity.hpp"
+#include "ecs/components/combat/TargetScopeComponent.hpp"
+#include "ecs/entity/Entity.hpp"
 
 #include <string>
 

@@ -1,16 +1,16 @@
 #include "application/bus/BattleMessageBus.hpp"
 #include "application/controllers/BattleController.hpp"
-#include "game_logic/modes/game_mode/battle_mode/BattleMode.hpp"
+#include "ecs/modes/battle_mode/BattleMode.hpp"
 
 #include <SFML/Graphics.hpp>
 
-#include "game_logic/modes/game_mode/overworld_mode/OverworldMode.hpp"
-#include "game_state/ecs/system/combat/combat_action/combat_action_executor/CombatActionExecutor.hpp"
+#include "ecs/system/combat/combat_action/combat_action_executor/CombatActionExecutor.hpp"
 #include "presentation/rendering/FontManager.hpp"
 #include "presentation/rendering/Renderer.hpp"
 #include "presentation/screens/battle_screen/BattleScreen.hpp"
 #include "presentation/screens/boot_screen/MainMenuScreen.hpp"
 #include "presentation/screens/core/Screen.hpp"
+#include "presentation/screens/overworld_screen/OverworldScreen.hpp"
 
 #include <optional>
 
@@ -35,7 +35,7 @@ int main()
 	Renderer renderer(fonts);
 	Screen *activeScreen = &MainMenuScreen::getInstance();
 
-	OverworldMode overworldMode;
+	OverworldScreen overworldScreen;
 
 	Engine::ECS::World world;
 	BattleMessageBus battleMessageBus;
@@ -63,10 +63,10 @@ int main()
 
 		const float deltaTime = frameClock.restart().asSeconds();
 		if (debugStartInOverworld) {
-			overworldMode.update(deltaTime);
+			overworldScreen.update(deltaTime);
 
 			window.clear();
-			overworldMode.render(window);
+			overworldScreen.render(window);
 			window.display();
 		} else if (debugStartInBattle) {
 			battleMode.Update(deltaTime);

@@ -3,8 +3,8 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
-#include "game_state/ecs/components/PositionComponent.hpp"
-#include "game_state/ecs/components/SpriteComponent.hpp"
+#include "ecs/components/PositionComponent.hpp"
+#include "ecs/components/SpriteComponent.hpp"
 
 // Draws an entity's current frame from its sprite sheet
 class SpriteRenderer {

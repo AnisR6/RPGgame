@@ -1,7 +1,7 @@
 #include "BattleScreen.hpp"
 
-#include "../../../game_state/ecs/system/combat/target_resolver/TargetResolver.hpp"
-#include "game_state/ecs/components/combat/TargetScopeComponent.hpp"
+#include "../../../ecs/system/combat/target_resolver/TargetResolver.hpp"
+#include "ecs/components/combat/TargetScopeComponent.hpp"
 #include "presentation/widgets/menu/Menu.hpp"
 #include "presentation/widgets/menu/MenuButton.hpp"
 #include "presentation/widgets/menu/MenuColumn.hpp"
