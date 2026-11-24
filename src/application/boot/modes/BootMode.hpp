@@ -1,6 +1,6 @@
 #pragma once
 
-#include "application/boot/BootCallbacks.hpp"
+#include "application/boot/callbacks/BootCallbacks.hpp"
 #include "application/shared/modes/IMode.hpp"
 #include "presentation/boot/screens/LoadGameScreen.hpp"
 #include "presentation/boot/screens/MainMenuScreen.hpp"

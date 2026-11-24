@@ -6,12 +6,10 @@
 #include "ecs/overworld/components/PositionComponent.hpp"
 #include "ecs/overworld/prefabs/OverworldEnemy.hpp"
 #include "ecs/shared/prefabs/Player.hpp"
-#include "presentation/overworld/menus/InGameBootMenu.hpp"
-#include "presentation/shared/rendering/AssetManager.hpp"
+#include "presentation/shared/assets/AssetManager.hpp"
 #include "presentation/shared/rendering/Renderer.hpp"
 
 #include <SFML/Graphics/Color.hpp>
-#include <SFML/Window/Keyboard.hpp>
 
 #include <array>
 #include <utility>
@@ -22,7 +20,6 @@ namespace {
     constexpr const char* PlayerSpriteSheetPath = "assets/tilesets/Player.png";
     constexpr const char* PlayerSpawnPointName = "PlayerSpawn";
     constexpr sf::Vector2f DefaultPlayerSpawnPoint(652.0f, 588.0f);
-    constexpr sf::Keyboard::Key OpenInGameBootMenuKey = sf::Keyboard::Key::Escape;
 
     struct EnemyPlacement {
             const char* name;
@@ -48,31 +45,7 @@ OverworldMode::OverworldMode(Engine::ECS::World& world, AssetManager& assets, Re
                                                   assets.LoadTexture(PlayerSpriteSheetPath))),
       controller(messageBus, screen, world) {
     SpawnEnemies(assets);
-    AddInGameBootMenu();
     SubscribeToEvents();
-}
-
-void OverworldMode::AddInGameBootMenu() {
-    screen.AddWidgetLayer(
-        OverworldScreen::WidgetLayer::InGameMenu,
-        CreateInGameBootMenu({.onResume = [this] { SetInGameBootMenuOpen(false); },
-                              .onExit =
-                                  [this] {
-                                      SetInGameBootMenuOpen(false);
-
-                                      if (callbacks.onExitToMainMenu) {
-                                          callbacks.onExitToMainMenu();
-                                      }
-                                  }}),
-        false);
-}
-
-void OverworldMode::SetInGameBootMenuOpen(const bool open) {
-    screen.SetWidgetLayerVisible(OverworldScreen::WidgetLayer::InGameMenu, open);
-}
-
-bool OverworldMode::IsInGameBootMenuOpen() const {
-    return screen.IsWidgetLayerVisible(OverworldScreen::WidgetLayer::InGameMenu);
 }
 
 void OverworldMode::SubscribeToEvents() {
@@ -93,30 +66,14 @@ void OverworldMode::SpawnEnemies(AssetManager& assets) {
 
 void OverworldMode::OnEnter() {
     state.encounteredEnemy.reset();
-    SetInGameBootMenuOpen(false);
     controller.RequestOverworldInfo();
 }
 
 bool OverworldMode::HandleEvent(const sf::Event& event) {
-    if (IsInGameBootMenuOpen()) {
-        return screen.HandleEvent(event);
-    }
-
-    const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
-
-    if (keyPressed != nullptr && keyPressed->code == OpenInGameBootMenuKey) {
-        SetInGameBootMenuOpen(true);
-        return true;
-    }
-
     return screen.HandleEvent(event);
 }
 
 void OverworldMode::Update(const float deltaTime) {
-    if (IsInGameBootMenuOpen()) {
-        return;
-    }
-
     world.UpdateSystems(systemManager, deltaTime);
 
     if (state.encounteredEnemy && callbacks.onStartBattle) {

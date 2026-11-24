@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ecs/core/world/World.hpp"
-#include "presentation/shared/rendering/AssetManager.hpp"
+#include "presentation/shared/assets/AssetManager.hpp"
 #include "presentation/shared/rendering/WidgetRenderer.hpp"
 #include "presentation/shared/rendering/WorldRenderer.hpp"
 #include "presentation/shared/screens/Screen.hpp"

@@ -1,4 +1,4 @@
-#include "presentation/shared/rendering/AssetManager.hpp"
+#include "presentation/shared/assets/AssetManager.hpp"
 
 #include "ecs/overworld/components/CollisionComponent.hpp"
 #include "ecs/overworld/components/LayerComponent.hpp"

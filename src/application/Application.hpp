@@ -1,11 +1,11 @@
 #pragma once
 
 #include "application/combat/modes/BattleMode.hpp"
-#include "application/boot/BootMode.hpp"
+#include "application/boot/modes/BootMode.hpp"
 #include "application/shared/modes/ModeManager.hpp"
 #include "application/overworld/modes/OverworldMode.hpp"
 #include "ecs/core/world/World.hpp"
-#include "presentation/shared/rendering/AssetManager.hpp"
+#include "presentation/shared/assets/AssetManager.hpp"
 #include "presentation/shared/rendering/Renderer.hpp"
 
 #include <SFML/Graphics/RenderWindow.hpp>

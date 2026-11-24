@@ -1,6 +1,6 @@
 #pragma once
 
-#include "presentation/shared/rendering/AssetManager.hpp"
+#include "presentation/shared/assets/AssetManager.hpp"
 #include "presentation/shared/widgets/core/Widget.hpp"
 
 #include <SFML/Graphics/RenderTarget.hpp>

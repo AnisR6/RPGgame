@@ -27,10 +27,6 @@ class OverworldMode : public IMode {
     private:
         void SubscribeToEvents();
         void SpawnEnemies(AssetManager& assets);
-        void AddInGameBootMenu();
-
-        void SetInGameBootMenuOpen(bool open);
-        [[nodiscard]] bool IsInGameBootMenuOpen() const;
 
         void HandleOverworldInfoRequest() const;
 
